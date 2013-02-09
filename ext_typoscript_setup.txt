@@ -1,0 +1,19 @@
+
+module.tx_extensionuploader {
+	view {
+		templateRootPath = EXT:extension_uploader/Resources/Private/Templates/
+		partialRootPath = EXT:extension_uploader/Resources/Private/Partials/
+		layoutRootPath = EXT:extension_uploader/Resources/Private/Layouts/
+	}
+	persistence.classes {
+			T3x\ExtensionUploader\Domain\Model\LocalExtension {
+				mapping {
+					tableName = tx_extensionmanager_domain_model_extension
+				}
+			}
+	}
+	features {
+		rewrittenPropertyMapper = 1
+		skipDefaultArguments = 0
+	}
+}

@@ -1,0 +1,90 @@
+{namespace em=TYPO3\CMS\Extensionmanager\ViewHelpers}
+
+<f:layout name="Default" />
+
+<f:section name="Content">
+
+	<script type="text/javascript" src="{f:uri.resource(path: 'Javascript/Settings.js')}" async></script>
+
+	<h3><f:translate key="settings.header" arguments="{0: extension.title}" /></h3>
+
+	<div class="typo3-message js-error message-error error-version" style="display: none">
+		<div class="message-header"><f:translate key="settings.error.version.header">Illegal Version</f:translate></div>
+		<div class="message-body"><f:translate key="settings.error.version.body">Version number must be a semver formated version string like 1.2.3</f:translate></div>
+	</div>
+
+	<div class="typo3-message js-error message-error error-release" style="display: none">
+		<div class="message-header"><f:translate key="settings.error.release.header">Lower release</f:translate></div>
+		<div class="message-body"><f:translate key="settings.error.release.body" arguments="{0: extension.version}">The release version must be higher than the latest release, which was {extension.version}</f:translate></div>
+	</div>
+
+	<div class="typo3-message js-error message-error error-username" style="display: none">
+		<div class="message-header"><f:translate key="settings.error.username.header">Username</f:translate></div>
+		<div class="message-body"><f:translate key="settings.error.username.body">Please enter a valid username</f:translate></div>
+	</div>
+
+	<div class="typo3-message js-error message-error error-release" style="display: none">
+		<div class="message-header"><f:translate key="settings.error.password.header">Password</f:translate></div>
+		<div class="message-body"><f:translate key="settings.error.password.body">Please enter a valid password</f:translate></div>
+	</div>
+
+	<div class="uploadForm" style="display:none;"><f:translate key="list.loading">Uploading</f:translate> <span class="spinner"></span></div>
+
+	<f:form name="extensionSettings" id="extensionSettings" action="upload" method="post" enctype="multipart/form-data">
+		<f:form.hidden name="extensionKey" value="{extension.extensionKey}"  />
+		<div class="inline-column">
+			<h3><f:translate key="settings.properties">Properties</f:translate></h3>
+
+			<div class="field">
+				<label for="state"><f:translate key="settings.label.state">State</f:translate></label><br>
+				<f:form.select id="state" name="settings[state]" options="{states}" value="{extension.state}" />
+			</div>
+
+			<div class="field release">
+				<label for="version"><f:translate key="settings.label.version">Release</f:translate></label>
+
+					<div class="field radio-field">
+						<f:form.radio name="settings[release]" value="bugfix" id="releaseBugfix" checked="checked" />
+						<label for="releaseBugfix"><f:translate key="settings.release.bugfix">Bugfix or Security Fix Release</f:translate></label>
+					</div>
+					<div class="field radio-field">
+						<f:form.radio name="settings[release]" value="minor" id="releaseMinor" />
+						<label for="releaseMinor"><f:translate key="settings.release.minor">Minor Release</f:translate></label>
+					</div>
+					<div class="field radio-field">
+						<f:form.radio name="settings[release]" value="major" id="releaseMajor" />
+						<label for="releaseMajor"><f:translate key="settings.release.major">Major Release</f:translate></label>
+					</div>
+					<div class="field radio-field">
+						<f:form.radio name="settings[release]" value="custom" id="releaseCustom" />
+						<label for="releaseCustom"><f:translate key="settings.release.custom">Custom release number</f:translate></label>
+					</div>
+					<f:form.textfield id="version" name="settings[version]" value="{extension.version}" />
+			</div>
+		</div>
+		<div class="inline-column">
+			<h3><f:translate key="settings.comment">Comment</f:translate></h3>
+			<label for="uploadComment"><f:translate key="settings.uploadComment">Upload Comment / Release Notes</f:translate></label><br>
+			<f:form.textarea id="uploadComment" name="settings[uploadComment]" rows="8" cols="35" />
+		</div>
+
+		<div class="inline-column">
+			<h3><f:translate key="settings.credentials">Repository Settings</f:translate></h3>
+			<div class="field">
+				<label for="repository"><f:translate key="settings.repository">Repository</f:translate></label><br>
+				<f:form.select name="repository" id="repository" options="{repositories}" optionLabelField="title" />
+			</div>
+			<div class="field">
+				<label for="username"><f:translate key="settings.credentials.username">Username</f:translate></label><br>
+				<f:form.textfield name="settings[username]" id="username" />
+			</div>
+			<div class="field">
+				<label for="password"><f:translate key="settings.credentials.password">Password</f:translate></label><br>
+				<f:form.password name="settings[password]" id="password" />
+			</div>
+		</div>
+		<br>
+		<f:form.submit value="{f:translate(key: 'settings.submit')}" />
+	</f:form>
+
+</f:section>

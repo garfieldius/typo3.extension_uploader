@@ -1,0 +1,58 @@
+{namespace em=TYPO3\CMS\Extensionmanager\ViewHelpers}
+
+<f:layout name="Default" />
+
+<f:section name="Content">
+
+	<table id="typo3-extension-list" class="typo3-extension-list">
+		<thead>
+		<tr>
+			<th><f:translate key="list.header.extensionAction"/></th>
+			<th><f:translate key="list.header.extensionName"/></th>
+			<th><f:translate key="list.header.extensionKey"/></th>
+			<th><f:translate key="list.header.extensionVersion"/></th>
+			<th><f:translate key="list.header.extensionState"/></th>
+		</tr>
+		</thead>
+		<tbody>
+		<f:for each="{extensions}" as="extension" key="extensionKey">
+			<tr id="{extensionKey}">
+
+				<f:if condition="{extension.error}">
+					<f:then>
+					<td colspan="10" class="error">{extension.error}</td>
+					</f:then>
+					<f:else>
+
+				<td class="upload"><f:be.buttons.icon title="{f:translate(key: 'list.uploadtitle')}" uri="{f:uri.action(action: 'settings', arguments: {extensionKey: extensionKey}) -> f:format.htmlspecialchars()}" icon="actions-edit-upload" /></td>
+
+
+				<f:if condition="{extension.description}">
+					<f:then>
+						<td title="{extension.description -> f:format.htmlentities()}">
+					</f:then>
+					<f:else>
+						<td>
+					</f:else>
+				</f:if>
+
+				<img src="../{extension.siteRelPath}/ext_icon.gif" alt="{extension.title}" height="16"> {extension.title}
+				</td>
+				<td>
+					{extensionKey}
+				</td>
+				<td>
+					{extension.version}
+				</td>
+				<td class="{extension.stateKey}">
+					{extension.stateKey}
+				</td>
+					</f:else>
+				</f:if>
+			</tr>
+		</f:for>
+		</tbody>
+	</table>
+
+	<script type="text/javascript" src="{f:uri.resource(path: 'Javascript/List.js')}" async></script>
+</f:section>

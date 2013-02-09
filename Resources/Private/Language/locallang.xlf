@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+	<file source-language="en" datatype="plaintext" original="messages" date="2013-02-10T13:15:38Z" product-name="extension_uploader">
+		<header/>
+		<body>
+			<trans-unit id="mlang_tabs_tab">
+				<source>Extension Uploader</source>
+			</trans-unit>
+			<trans-unit id="mlang_labels_tabdescr">
+				<source>Upload your extension to the TER</source>
+			</trans-unit>
+			<trans-unit id="mlang_labels_tablabel">
+				<source>Upload extension to TER</source>
+			</trans-unit>
+
+			<trans-unit id="list.loading">
+				<source>Uploading to TER</source>
+			</trans-unit>
+			<trans-unit id="list.header.extensionAction">
+				<source>Upload</source>
+			</trans-unit>
+			<trans-unit id="list.header.extensionName">
+				<source>Extension</source>
+			</trans-unit>
+			<trans-unit id="list.header.extensionKey">
+				<source>Key</source>
+			</trans-unit>
+			<trans-unit id="list.header.extensionVersion">
+				<source>Version</source>
+			</trans-unit>
+			<trans-unit id="list.header.extensionState">
+				<source>State</source>
+			</trans-unit>
+			<trans-unit id="list.header.loading">
+				<source>Uploading to TER</source>
+			</trans-unit>
+
+			<trans-unit id="list.uploadtitle">
+				<source>Upload extension to TER</source>
+			</trans-unit>
+
+			<trans-unit id="state.alpha">
+				<source>Alpha</source>
+			</trans-unit>
+			<trans-unit id="state.beta">
+				<source>Beta</source>
+			</trans-unit>
+			<trans-unit id="state.stable">
+				<source>Stable</source>
+			</trans-unit>
+			<trans-unit id="state.experimental">
+				<source>Experimental</source>
+			</trans-unit>
+			<trans-unit id="state.test">
+				<source>Test</source>
+			</trans-unit>
+			<trans-unit id="state.obsolete">
+				<source>Obsolete</source>
+			</trans-unit>
+			<trans-unit id="state.excludeFromUpdates">
+				<source>Exclude from updates</source>
+			</trans-unit>
+
+			<trans-unit id="settings.header">
+				<source>Upload extension '%s'</source>
+			</trans-unit>
+
+			<trans-unit id="settings.properties">
+				<source>Set release properties</source>
+			</trans-unit>
+
+			<trans-unit id="settings.label.state">
+				<source>Release state</source>
+			</trans-unit>
+			<trans-unit id="settings.label.version">
+				<source>Release version</source>
+			</trans-unit>
+			<trans-unit id="settings.release.bugfix">
+				<source>Bugfix or Security Fix Release</source>
+			</trans-unit>
+			<trans-unit id="settings.release.minor">
+				<source>Minor Release</source>
+			</trans-unit>
+			<trans-unit id="settings.release.major">
+				<source>Major Release</source>
+			</trans-unit>
+			<trans-unit id="settings.release.custom">
+				<source>Custom release number</source>
+			</trans-unit>
+
+			<trans-unit id="settings.comment">
+				<source>typo3.org credentials</source>
+			</trans-unit>
+
+			<trans-unit id="settings.credentials">
+				<source>Repository settings</source>
+			</trans-unit>
+			<trans-unit id="settings.repository">
+				<source>Target Repository</source>
+			</trans-unit>
+			<trans-unit id="settings.credentials.username">
+				<source>Username</source>
+			</trans-unit>
+			<trans-unit id="settings.credentials.password">
+				<source>Password</source>
+			</trans-unit>
+
+			<trans-unit id="settings.error.version.header">
+				<source>Invalid Version</source>
+			</trans-unit>
+			<trans-unit id="settings.error.version.body">
+				<source>Version number must be a semver formated version string like 1.2.3</source>
+			</trans-unit>
+			<trans-unit id="settings.error.release.header">
+				<source>Lower release</source>
+			</trans-unit>
+			<trans-unit id="settings.error.release.body">
+				<source>The release version must be higher than the latest release, which was %1$s</source>
+			</trans-unit>
+			<trans-unit id="settings.error.username.header">
+				<source>Username</source>
+			</trans-unit>
+			<trans-unit id="settings.error.username.body">
+				<source>Please enter a valid username</source>
+			</trans-unit>
+			<trans-unit id="settings.error.password.header">
+				<source>Password</source>
+			</trans-unit>
+			<trans-unit id="settings.error.password.body">
+				<source>Please enter a valid password</source>
+			</trans-unit>
+
+			<trans-unit id="settings.submit">
+				<source>Upload to TER</source>
+			</trans-unit>
+
+			<trans-unit id="upload.success">
+				<source>Extension '%1$s' has been released as %2$s.&lt;br&gt;Visit &lt;a href=&quot;https://typo3.org/extensions/repository/view/%1$s&quot; target=&quot;_blank&quot;&gt;typo3.org&lt;/a&gt; too take a look at it</source>
+			</trans-unit>
+
+			<trans-unit id="exception.1">
+				<source>Just testing</source>
+			</trans-unit>
+			<trans-unit id="exception.1360445248">
+				<source>No state option provided. A valid state is required.</source>
+			</trans-unit>
+			<trans-unit id="exception.1360445400">
+				<source>The set state is not supported, please keep to the options in the dropdown.</source>
+			</trans-unit>
+			<trans-unit id="exception.1360445519">
+				<source>No version number has been provided. Please set your release version properly.</source>
+			</trans-unit>
+			<trans-unit id="exception.1360445614">
+				<source>No release type has been set. This is required to properly set your release version number.</source>
+			</trans-unit>
+			<trans-unit id="exception.1360445797">
+				<source>Custom release version number has not a correct format. Use a semver version number like 1.2.33</source>
+			</trans-unit>
+			<trans-unit id="exception.1360445899">
+				<source>The release type provided is not valid, use one of 'major', 'minor', 'bugfix' or 'custom'</source>
+			</trans-unit>
+			<trans-unit id="exception.1360446051">
+				<source>The selected release version is lower than the currently loaded. A new release must have a higher release number.</source>
+			</trans-unit>
+			<trans-unit id="exception.1360446180">
+				<source>The given credentials are incomplete. Both username and password are mandatory.</source>
+			</trans-unit>
+			<trans-unit id="exception.1360446444">
+				<source>The provided username cannot be valid. A correct username is required.</source>
+			</trans-unit>
+			<trans-unit id="exception.1360446283">
+				<source>The provided password cannot be valid. A correct password is required.</source>
+			</trans-unit>
+			<trans-unit id="exception.1360446565">
+				<source>Cannot read a file in the extension folder. All files in the extension folder must be readable by PHP.</source>
+			</trans-unit>
+			<trans-unit id="exception.1360447912">
+				<source>The WSDL resource of the selected repository is not a valid URL.</source>
+			</trans-unit>
+			<trans-unit id="exception.1360448130">
+				<source>The soap extension is not available. It is required to communicate with the TER.</source>
+			</trans-unit>
+			<trans-unit id="exception.1360448742">
+				<source>Connection error when trying to connect to the repository.</source>
+			</trans-unit>
+		</body>
+	</file>
+</xliff>
