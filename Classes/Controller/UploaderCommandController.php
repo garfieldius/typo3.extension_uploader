@@ -38,6 +38,27 @@ class UploaderCommandController extends CommandController {
 	protected $repositories;
 
 	/**
+	 * @param \T3x\ExtensionUploader\Upload\Uploader $uploader
+	 */
+	public function injectUploader(\T3x\ExtensionUploader\Upload\Uploader $uploader) {
+		$this->uploader = $uploader;
+	}
+
+	/**
+	 * @param \T3x\ExtensionUploader\Domain\Repository\LocalExtensionRepository $extensions
+	 */
+	public function injectExtensions(\T3x\ExtensionUploader\Domain\Repository\LocalExtensionRepository $extensions) {
+		$this->extensions = $extensions;
+	}
+
+	/**
+	 * @param \TYPO3\CMS\Extensionmanager\Domain\Repository\RepositoryRepository $repositories
+	 */
+	public function injectRepositories(\TYPO3\CMS\Extensionmanager\Domain\Repository\RepositoryRepository $repositories) {
+		$this->repositories = $repositories;
+	}
+
+	/**
 	 * Upload an extension to TER
 	 *
 	 * An extension with the given extension key will be entirely uploaded and a new
