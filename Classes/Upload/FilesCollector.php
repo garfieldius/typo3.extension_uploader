@@ -71,18 +71,16 @@ class FilesCollector implements SingletonInterface {
 	 * @throws NoFileAccessException
 	 */
 	public function collectFilesOfExtension($extensionKey) {
-		$md5FilesList = array();
+		$uploadFilesList = array();
 		$filesList    = $this->collectAllFilesInDirectory(ExtensionManagementUtility::extPath($extensionKey));
-		$absolutePrefixLength = strlen(PATH_site);
+		$absolutePrefixLength = strlen(ExtensionManagementUtility::extPath($extensionKey));
 
 		foreach ($filesList as $file) {
 			$file = (string) $file;
 
-			$fh = fopen($file, 'r+');
-			if (!is_resource($fh)) {
-				throw new NoFileAccessException('Cannot read file ' . $file, 1360446565);
+			if (is_dir($file)) {
+				continue;
 			}
-			fclose($fh);
 
 			$include = TRUE;
 			foreach ($this->filters as $filter) {
@@ -91,12 +89,26 @@ class FilesCollector implements SingletonInterface {
 			}
 
 			if ($include) {
-				$md5FilesList[ md5_file($file) ] = substr($file, $absolutePrefixLength);
+				$content = file_get_contents($file);
+				if (!is_string($content)) {
+					throw new NoFileAccessException('Cannot read file ' . $file, 1360446565);
+				}
+				$relativeFile = substr($file, $absolutePrefixLength);
+				$id           = md5($content);
+				$uploadFilesList[ utf8_encode($relativeFile) ] = array(
+					'name'             => utf8_encode($relativeFile),
+					'size'             => strlen($content),
+					'modificationTime' => intval(filemtime($file)),
+					'isExecutable'     => intval(is_executable($file)),
+					'content'          => $content,
+					'contentMD5'       => $id,
+					'content_md5'      => $id
+				);
 			} else {
 				$this->excludedFiles[] = $file;
 			}
 		}
-		return $md5FilesList;
+		return $uploadFilesList;
 	}
 
 	/**

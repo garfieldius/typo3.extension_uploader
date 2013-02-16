@@ -31,13 +31,13 @@ class FilesCollectorTest extends BaseTestCase {
 			for ($i=0; $i < $length; $i++) {
 				$content .= substr($chars, mt_rand(0, $charLength), 1);
 			}
-			file_put_contents(PATH_site . 'typo3temp/' . $filename, $content);
+			file_put_contents(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('extension_uploader') . $filename, $content);
 		}
 	}
 
 	public function tearDown() {
 		foreach (array('testA', 'testB', 'testC', '.gitinfo') as $filename) {
-			unlink(PATH_site . 'typo3temp/' . $filename);
+			unlink(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('extension_uploader') . $filename);
 		}
 	}
 
@@ -46,8 +46,18 @@ class FilesCollectorTest extends BaseTestCase {
 		$expected = array();
 		$files = array();
 		foreach (array('testA', 'testB', 'testC') as $filename) {
-			$file = PATH_site . 'typo3temp/' . $filename;
-			$expected[ md5_file($file) ] = 'typo3temp/' . $filename;
+			$file = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('extension_uploader') . $filename;
+			$content = file_get_contents($file);
+			$id = md5($content);
+			$expected[ $filename ] =  array(
+				'name'             => utf8_encode($filename),
+				'size'             => strlen($content),
+				'modificationTime' => intval(filemtime($file)),
+				'isExecutable'     => intval(is_executable($file)),
+				'content'          => $content,
+				'contentMD5'       => $id,
+				'content_md5'      => $id
+			);
 			$files[] = $file;
 		}
 		$path = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('extension_uploader');
@@ -64,7 +74,7 @@ class FilesCollectorTest extends BaseTestCase {
 	public function testCollectingNotAccessibleFileThrowsException() {
 		$files = array();
 		foreach (array('testA', 'testB', 'notExistingC') as $filename) {
-			$file = PATH_site . 'typo3temp/' . $filename;
+			$file = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('extension_uploader') . $filename;
 			$files[] = $file;
 		}
 		$path = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('extension_uploader');
@@ -82,11 +92,21 @@ class FilesCollectorTest extends BaseTestCase {
 		$expectedExcluded = array();
 		$files = array();
 		foreach (array('testA', 'testB', 'testC', '.gitinfo') as $filename) {
-			$file = PATH_site . 'typo3temp/' . $filename;
+			$file = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('extension_uploader') . $filename;
 			if ($filename === '.gitinfo') {
 				$expectedExcluded[] = $file;
 			} else {
-				$expectedIncluded[ md5_file($file) ] = 'typo3temp/' . $filename;
+				$content = file_get_contents($file);
+				$id = md5($content);
+				$expectedIncluded[ $filename ] =  array(
+					'name'             => utf8_encode($filename),
+					'size'             => strlen($content),
+					'modificationTime' => intval(filemtime($file)),
+					'isExecutable'     => intval(is_executable($file)),
+					'content'          => $content,
+					'contentMD5'       => $id,
+					'content_md5'      => $id
+				);
 			}
 			$files[] = $file;
 		}
