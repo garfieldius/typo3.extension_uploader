@@ -137,6 +137,9 @@
 			<trans-unit id="upload.success">
 				<source>Extension '%1$s' has been released as %2$s.&lt;br&gt;Visit &lt;a href=&quot;https://typo3.org/extensions/repository/view/%1$s&quot; target=&quot;_blank&quot;&gt;typo3.org&lt;/a&gt; too take a look at it</source>
 			</trans-unit>
+			<trans-unit id="upload.success.cli">
+				<source>Extension '%1$s' has been released as %2$s. see https://typo3.org/extensions/repository/view/%1$s for details</source>
+			</trans-unit>
 
 			<trans-unit id="exception.1">
 				<source>Just testing</source>
