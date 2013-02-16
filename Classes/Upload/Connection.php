@@ -21,19 +21,68 @@ namespace T3x\ExtensionUploader\Upload;
 class Connection {
 
 	/**
+	 * @var string
+	 */
+	protected $wsdlUrl;
+
+	/**
+	 * @var string
+	 */
+	protected $username;
+
+	/**
+	 * @var string
+	 */
+	protected $password;
+
+	/**
 	 * @var \SoapClient
 	 */
 	protected $client;
 
 	/**
-	 * @param string $wsdlUrl
-	 * @param string $username
-	 * @param string $password
-	 * @throws ConnectionException
-	 * @throws
+	 * @param \SoapClient $client
 	 */
-	public function __construct($wsdlUrl, $username, $password) {
-		if (!filter_var($wsdlUrl, FILTER_VALIDATE_URL)) {
+	public function setClient(\SoapClient $client) {
+		$this->client = $client;
+	}
+
+	/**
+	 * Sets Password
+	 * @param string $password
+	 * @return Connection
+	 */
+	public function setPassword($password) {
+		$this->password = $password;
+		return $this;
+	}
+
+	/**
+	 * Sets Username
+	 * @param string $username
+	 * @return Connection
+	 */
+	public function setUsername($username) {
+		$this->username = $username;
+		return $this;
+	}
+
+	/**
+	 * Sets WsdlUrl
+	 * @param string $wsdlUrl
+	 * @return Connection
+	 */
+	public function setWsdlUrl($wsdlUrl) {
+		$this->wsdlUrl = $wsdlUrl;
+		return $this;
+	}
+
+	/**
+	 * @return \SoapClient
+	 * @throws ConnectionException
+	 */
+	public function connectClient() {
+		if (!filter_var($this->wsdlUrl, FILTER_VALIDATE_URL)) {
 			throw new ConnectionException('No valid WSDL URL', 1360447912);
 		}
 
@@ -42,20 +91,41 @@ class Connection {
 		}
 
 		try {
-			$this->client = new \SoapClient($wsdlUrl, array(
-				'keep_alive'   => TRUE,
-				'username'     => $username,
-				'password'     => $password,
+			$client = new \SoapClient($this->wsdlUrl, array(
+				'username'     => $this->username,
+				'password'     => $this->password,
 				'exceptions'   => TRUE,
+				'trace'        => TRUE,
 				'cache_wsdl'   => WSDL_CACHE_DISK,
 				'soap_version' => SOAP_1_2
 			));
 		} catch (\SoapFault $exception) {
 			throw $this->soapFaultToInternalException($exception);
 		}
+		return $client;
 	}
 
 	protected function soapFaultToInternalException(\SoapFault $oldException) {
 		return new ConnectionException($oldException->getMessage(), 1360448742, $oldException);
+	}
+
+	/**
+	 * @param array $data
+	 * @throws ConnectionException
+	 * @return array
+	 */
+	public function uploadExtension(array $data) {
+		try {
+			if ($this->client instanceof \SoapClient !== TRUE) {
+				throw new ConnectionException('No soap client set', 1361042666);
+			}
+			$authHeader = new \stdClass();
+			$authHeader->username = $this->username;
+			$authHeader->password = $this->password;
+			$soapHeader = new \SoapHeader('', 'HeaderLogin', $authHeader, TRUE);
+			return $this->client->__soapCall('uploadExtension', $data, NULL, $soapHeader);
+		} catch (\SoapFault $exception) {
+			throw $this->soapFaultToInternalException($exception);
+		}
 	}
 }

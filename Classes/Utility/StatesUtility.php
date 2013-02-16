@@ -13,7 +13,7 @@ use TYPO3\CMS\Extensionmanager\Domain\Model\Extension;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 /**
- * Utility that provides data for the template, called by the action
+ * Utility that provides data for the template, called by the list action
  *
  * @package ExtensionUploader
  * @author Georg Großberger <contact@grossberger-ge.org>

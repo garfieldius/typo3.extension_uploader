@@ -10,6 +10,8 @@
 
 namespace T3x\ExtensionUploader\Upload;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
 use T3x\ExtensionUploader\FileFilter\FileFilterInterface;
 use TYPO3\CMS\Core\SingletonInterface;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
@@ -44,6 +46,24 @@ class FilesCollector implements SingletonInterface {
 	}
 
 	/**
+	 * Get all files in a directory
+	 * @TODO: Use some TYPO3 API??, might be superfluous
+	 *
+	 * @param string $extensionPath
+	 * @return \RecursiveIteratorIterator
+	 */
+	protected function collectAllFilesInDirectory($extensionPath) {
+		return new RecursiveIteratorIterator(
+			new RecursiveDirectoryIterator(
+				$extensionPath,
+				RecursiveDirectoryIterator::FOLLOW_SYMLINKS | RecursiveDirectoryIterator::UNIX_PATHS | RecursiveDirectoryIterator::SKIP_DOTS
+			),
+			RecursiveIteratorIterator::CHILD_FIRST,
+			RecursiveIteratorIterator::LEAVES_ONLY
+		);
+	}
+
+	/**
 	 * Collect all files from an extension folder
 	 *
 	 * @param $extensionKey string
@@ -51,11 +71,12 @@ class FilesCollector implements SingletonInterface {
 	 * @throws NoFileAccessException
 	 */
 	public function collectFilesOfExtension($extensionKey) {
-		$extensionPath = ExtensionManagementUtility::extPath($extensionKey);
-		$filesList     = GeneralUtility::getFilesInDir($extensionPath, '', TRUE);
-		$md5FilesList  = array();
+		$md5FilesList = array();
+		$filesList    = $this->collectAllFilesInDirectory(ExtensionManagementUtility::extPath($extensionKey));
+		$absolutePrefixLength = strlen(PATH_site);
 
 		foreach ($filesList as $file) {
+			$file = (string) $file;
 
 			$fh = fopen($file, 'r+');
 			if (!is_resource($fh)) {
@@ -70,7 +91,7 @@ class FilesCollector implements SingletonInterface {
 			}
 
 			if ($include) {
-				$md5FilesList[ md5_file($file) ] = $file;
+				$md5FilesList[ md5_file($file) ] = substr($file, $absolutePrefixLength);
 			} else {
 				$this->excludedFiles[] = $file;
 			}

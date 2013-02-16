@@ -35,6 +35,11 @@ class ObjectUtility implements SingletonInterface {
 	protected $filesCollector;
 
 	/**
+	 * @var \TYPO3\CMS\Extbase\SignalSlot\Dispatcher
+	 */
+	protected $signals;
+
+	/**
 	 * @var array
 	 */
 	protected $connections = array();
@@ -47,6 +52,13 @@ class ObjectUtility implements SingletonInterface {
 	}
 
 	/**
+	 * @param \TYPO3\CMS\Extbase\SignalSlot\Dispatcher $signals
+	 */
+	public function injectSignals(\TYPO3\CMS\Extbase\SignalSlot\Dispatcher $signals) {
+		$this->signals = $signals;
+	}
+
+	/**
 	 * @return \T3x\ExtensionUploader\Upload\FilesCollector
 	 * @throws InvalidObjectException
 	 */
@@ -54,36 +66,37 @@ class ObjectUtility implements SingletonInterface {
 		if (!$this->filesCollector) {
 
 			$this->filesCollector = $this->objectManager->get('T3x\ExtensionUploader\Upload\FilesCollector');
-			$builtInFilters = array(
+			$filterNames = array(
 				'SystemMetaData',
 				'ExtensionBuilder',
 				'ExtensionManagerMetaData',
 				'VcsMetaData'
 			);
 
-			foreach ($builtInFilters as $filterName) {
+			$this->signals->dispatch('ExtensionUploader\Utility\ObjectUtility', 'createFilesCollector', array(&$filterNames));
 
-				$className = 'T3x\ExtensionUploader\FileFilter\\' . $filterName . 'Filter';
-				// Check if class exists
-				if (!class_exists($className)) {
-					throw new InvalidObjectException("Class '$filterName' not found");
-				}
+			foreach ($filterNames as $className) {
 
 				// Make the instance
+				if (strpos($className, '\\') === FALSE) {
+					$className = 'T3x\ExtensionUploader\FileFilter\\' . $className . 'Filter';
+				}
+
+				if (!class_exists($className)) {
+					throw new InvalidObjectException('Unknown class ' . $className);
+				}
+
 				$filter = GeneralUtility::makeInstance($className);
 
 				// Check if object has a filter interface
 				if ($filter instanceof FileFilterInterface) {
 					$this->filesCollector->addFilesFilter($filter);
 				} else {
-					throw new InvalidObjectException("Instance of $filterName does not implement the FileFilterInterface");
+					throw new InvalidObjectException("Instance of $className does not implement the FileFilterInterface");
 				}
 			}
 
 			// Signal for adding custom filters
-			$this->objectManager
-				 ->get('TYPO3\CMS\Extbase\SignalSlot\Dispatcher')
-				 ->dispatch('ExtensionUploader_ObjectUtility', 'createFilesCollector', array($this->filesCollector));
 		}
 		return $this->filesCollector;
 	}
@@ -97,7 +110,13 @@ class ObjectUtility implements SingletonInterface {
 	public function getSoapConnectionForRepository(Repository $repository, $username, $password) {
 		$wsdl = $repository->getWsdlUrl();
 		if (!isset($this->connections[$wsdl])) {
-			$this->connections[$wsdl] = $this->objectManager->create('T3x\ExtensionUploader\Upload\Connection', $wsdl, $username, $password);
+			$connection = $this->objectManager->create('T3x\ExtensionUploader\Upload\Connection');
+			$connection->setWsdlUrl($repository->getWsdlUrl());
+			$connection->setUsername($username);
+			$connection->setPassword($password);
+			$connection->setClient($connection->connectClient());
+			$this->signals->dispatch('ExtensionUploader\Utility\ObjectUtility', 'createConnection', array($connection, $repository, $username, $password));
+			$this->connections[$wsdl] = $connection;
 		}
 		return $this->connections[$wsdl];
 	}

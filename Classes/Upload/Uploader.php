@@ -28,6 +28,11 @@ class Uploader {
 	protected $statesUtility;
 
 	/**
+	 * @var \T3x\ExtensionUploader\Utility\ObjectUtility
+	 */
+	protected $objects;
+
+	/**
 	 * @var array
 	 */
 	protected $settings;
@@ -43,10 +48,29 @@ class Uploader {
 	protected $repository;
 
 	/**
+	 * @var \T3x\ExtensionUploader\Upload\ExtensionDataCollector
+	 */
+	protected $dataCollector;
+
+	/**
 	 * @param \T3x\ExtensionUploader\Utility\StatesUtility $statesUtility
 	 */
 	public function injectStatesUtility(\T3x\ExtensionUploader\Utility\StatesUtility $statesUtility) {
 		$this->statesUtility = $statesUtility;
+	}
+
+	/**
+	 * @param \T3x\ExtensionUploader\Utility\ObjectUtility $objects
+	 */
+	public function injectObjects(\T3x\ExtensionUploader\Utility\ObjectUtility $objects) {
+		$this->objects = $objects;
+	}
+
+	/**
+	 * @param \T3x\ExtensionUploader\Upload\ExtensionDataCollector $dataCollector
+	 */
+	public function injectDataCollector(\T3x\ExtensionUploader\Upload\ExtensionDataCollector $dataCollector) {
+		$this->dataCollector = $dataCollector;
 	}
 
 	/**
@@ -93,10 +117,6 @@ class Uploader {
 			throw new ValidationFailedException('State not supported', 1360445400);
 		}
 
-		// Validate set version
-		if (empty($this->settings['version'])) {
-			throw new ValidationFailedException('No version number', 1360445519);
-		}
 		if (empty($this->settings['release'])) {
 			throw new ValidationFailedException('No release type', 1360445614);
 		}
@@ -153,6 +173,18 @@ class Uploader {
 	}
 
 	public function upload() {
-
+		$connection = $this->objects->getSoapConnectionForRepository(
+			$this->repository,
+			$this->settings['username'],
+			$this->settings['password']
+		);
+		$connection->uploadExtension(array(
+			'accountData'   => array(
+				'username'  => $this->settings['username'],
+				'password'  => $this->settings['password'],
+			),
+			'extensionData' => $this->dataCollector->getDataForExtension($this->extension, $this->settings),
+			'filesData'     => $this->objects->getFilesCollector()->collectFilesOfExtension($this->extension->getExtensionKey())
+		));
 	}
 }

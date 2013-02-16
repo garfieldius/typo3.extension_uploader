@@ -44,8 +44,15 @@ class LocalExtensionRepository extends ExtensionRepository {
 	public function findAll() {
 
 		$availableLocalExtensions = $this->listUtility->getAvailableAndInstalledExtensionsWithAdditionalInformation();
-		$relPath = str_replace(PATH_site, '', PATH_typo3conf . 'ext/');
+		$relPath = str_replace(PATH_site, '', PATH_typo3conf . 'ext');
 		$extensions = array();
+		$forcedDefaultDependencies = serialize(array(
+			'depends'   => array(
+				'typo3' => TYPO3_version . '-' . TYPO3_branch . '.99'
+			),
+			'conflicts' => array(),
+			'suggests'  => array()
+		));
 
 		foreach ($availableLocalExtensions as $extKey => $extensionConfig) {
 
@@ -53,16 +60,63 @@ class LocalExtensionRepository extends ExtensionRepository {
 				continue;
 			}
 
-			if (!$extensionConfig['terObject']) {
+			if (isset($extensionConfig['terObject']) && $extensionConfig['terObject'] instanceof \TYPO3\CMS\Extensionmanager\Domain\Model\Extension) {
+				$extension = $this->findOneByExtensionKeyAndVersion($extKey, $extensionConfig['terObject']->getVersion());
+				$extension->setKnownToTer(TRUE);
+			} else {
 				$extension = GeneralUtility::makeInstance('T3x\ExtensionUploader\Domain\Model\LocalExtension');
 				$extension->setExtensionKey($extKey);
-			} else {
-				$extension = $this->findHighestAvailableVersion($extKey);
+				$extension->setKnownToTer(FALSE);
 			}
+			/* @var $extension \T3x\ExtensionUploader\Domain\Model\LocalExtension */
 			$extension->setVersion($extensionConfig['version']);
 			$extension->setTitle($extensionConfig['title']);
 			$extension->setLoaded(ExtensionManagementUtility::isLoaded($extKey));
 			$extension->setSiteRelPath($extensionConfig['siteRelPath']);
+
+			if (!empty($extensionConfig['constraints']) && is_array($extensionConfig['constraints'])) {
+				$extension->setSerializedDependencies(serialize($extensionConfig['constraints']));
+			} else {
+				$extension->setSerializedDependencies($forcedDefaultDependencies);
+			}
+
+			if (!empty($extensionConfig['author_company'])) {
+				$extension->setAuthorCompany($extensionConfig['author_company']);
+			}
+			if (!empty($extensionConfig['CGLcompliance'])) {
+				$extension->setCglCompliance($extensionConfig['CGLcompliance']);
+			}
+			if (!empty($extensionConfig['author_company'])) {
+				$extension->setCglComplianceNote($extensionConfig['CGLcompliance_note']);
+			}
+			if (!empty($extensionConfig['uploadFolder'])) {
+				$extension->setUploadFolder(TRUE);
+			}
+			if (!empty($extensionConfig['shy'])) {
+				$extension->setShy(TRUE);
+			}
+			if (!empty($extensionConfig['clearCacheOnLoad'])) {
+				$extension->setClearCachesOnLoad(TRUE);
+			}
+			if (!empty($extensionConfig['createDirs'])) {
+				$extension->setCreateDirectories($extensionConfig['createDirs']);
+			}
+			if (!empty($extensionConfig['module'])) {
+				$extension->setCreateDirectories($extensionConfig['module']);
+			}
+			if (!empty($extensionConfig['modify_tables'])) {
+				$extension->setModifiedTables($extensionConfig['modify_tables']);
+			}
+			if (!empty($extensionConfig['priority'])) {
+				$extension->setPriority($extensionConfig['priority']);
+			}
+			if (!empty($extensionConfig['lockType'])) {
+				$extension->setPriority($extensionConfig['lockType']);
+			}
+			if (!empty($extensionConfig['docPath'])) {
+				$extension->setDocumentationPath($extensionConfig['docPath']);
+			}
+
 			$extensions[$extKey] = $extension;
 		}
 

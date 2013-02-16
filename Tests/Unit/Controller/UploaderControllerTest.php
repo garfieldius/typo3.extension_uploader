@@ -28,6 +28,7 @@ class UploaderControllerTest extends BaseTestCase {
 	protected $controller;
 
 	protected function setUp() {
+		$this->objectManager = \TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance($this->buildAccessibleProxy(get_class($this->objectManager)));
 		$this->controller = $this->objectManager->create($this->buildAccessibleProxy('T3x\ExtensionUploader\Controller\UploaderController'));
 	}
 
@@ -61,10 +62,22 @@ class UploaderControllerTest extends BaseTestCase {
 			5 => 'obsolete',
 			6 => 'excludeFromUpdates'
 		);
+		$settings = array(
+			'version' => '1.2.3',
+			'state' => 'alpha'
+		);
+		$testRepos = array(
+			new \TYPO3\CMS\Extensionmanager\Domain\Model\Repository()
+		);
 
-		$extension = $this->objectManager
-						  ->get('T3x\ExtensionUploader\Domain\Repository\LocalExtensionRepository')
-						  ->findOneByExtensionKey('extension_uploader');
+		$extension = new \T3x\ExtensionUploader\Domain\Model\LocalExtension();
+		$extension->setExtensionKey('extension_uploader');
+
+		$extensionRepository = $this->getMock('T3x\ExtensionUploader\Domain\Repository\LocalExtensionRepository');
+		$extensionRepository->expects($this->once())->method('findOneByExtensionKey')->will($this->returnValue($extension));
+
+		$repositories = $this->getMock('TYPO3\CMS\Extensionmanager\Domain\Repository\RepositoryRepository');
+		$repositories->expects($this->once())->method('findAll')->will($this->returnValue($testRepos));
 
 		$utility = $this->getMock('T3x\ExtensionUploader\Utility\StatesUtility');
 		$utility->expects($this->once())->method('getStates')->will($this->returnValue($statesDummies));
@@ -72,28 +85,29 @@ class UploaderControllerTest extends BaseTestCase {
 		$view = $this->getMock('TYPO3\CMS\Fluid\View\TemplateView', array('__construct', 'assignMultiple'));
 		$view->expects($this->once())->method('assignMultiple')->with(array(
 			'extension' => $extension,
-			'states' => $statesDummies
+			'states' => $statesDummies,
+			'repositories' => $testRepos,
+			'settings' => $settings
 		));
 
+		$this->controller->injectExtensions($extensionRepository);
 		$this->controller->injectStatesUtility($utility);
+		$this->controller->injectRepositories($repositories);
 		$this->controller->_set('view', $view);
-		$this->controller->settingsAction('extension_uploader');
+		$this->controller->settingsAction('extension_uploader', $settings);
 	}
 
 	public function testSuccessfulUploadAction() {
-		$extension = $this->objectManager->get('T3x\ExtensionUploader\Domain\Repository\LocalExtensionRepository')->findOneByExtensionKey('extension_uploader');
-		$extension->_setProperty('_isClone', TRUE);
+		$extension = new \T3x\ExtensionUploader\Domain\Model\LocalExtension();
+		$extension->setExtensionKey('extension_uploader');
+		$extension->_setClone(TRUE);
 
 		$settings = array(
 			'version' => '1.2.3',
 			'state' => 'alpha'
 		);
-
-		$uploader = $this->getMock('T3x\ExtensionUploader\Upload\Uploader');
-		$uploader->expects($this->once())->method('setExtension')->with($extension);
-		$uploader->expects($this->once())->method('setSettings')->with($settings);
-		$uploader->expects($this->once())->method('validate');
-		$uploader->expects($this->once())->method('upload');
+		$testRepo = new \TYPO3\CMS\Extensionmanager\Domain\Model\Repository();
+		$testRepo->_setClone(TRUE);
 
 		$repository = $this->getMock('T3x\ExtensionUploader\Domain\Repository\LocalExtensionRepository');
 		$repository->expects($this->once())->method('findOneByExtensionKey')->with('extension_uploader')->will($this->returnValue($extension));
@@ -102,35 +116,47 @@ class UploaderControllerTest extends BaseTestCase {
 		$flashMessages = $this->getMock('TYPO3\CMS\Extbase\Mvc\Controller\FlashMessageContainer');
 		$flashMessages->expects($this->once())->method('add')->with($message);
 
+		$uploader = $this->getMock('T3x\ExtensionUploader\Upload\Uploader');
+		$uploader->expects($this->once())->method('setExtension')->with($extension);
+		$uploader->expects($this->once())->method('setSettings')->with($settings);
+		$uploader->expects($this->once())->method('setRepository')->with($testRepo);
+		$uploader->expects($this->once())->method('validate');
+		$uploader->expects($this->once())->method('upload');
+
 		$controller = $this->getMock('T3x\ExtensionUploader\Controller\UploaderController', array('redirect'));
 		$controller->expects($this->once())->method('redirect')->with('list');
 
 		$controller->injectUploader($uploader);
 		$controller->injectExtensions($repository);
 		$controller->injectFlashMessageContainer($flashMessages);
-		$controller->uploadAction('extension_uploader', $settings);
+		$controller->uploadAction('extension_uploader', $settings, $testRepo);
 	}
 
 	public function testFailedUploadAction() {
-		$extension = $this->objectManager->get('T3x\ExtensionUploader\Domain\Repository\LocalExtensionRepository')->findOneByExtensionKey('extension_uploader');
-		$extension->_setProperty('_isClone', TRUE);
+		$extension = new \T3x\ExtensionUploader\Domain\Model\LocalExtension();
+		$extension->setExtensionKey('extension_uploader');
+		$extension->_setClone(TRUE);
+
 		$exception = new \T3x\ExtensionUploader\UploaderException('Something went wrong', 1);
 
 		$settings = array(
 			'version' => '1.2.3',
 			'state' => 'alpha'
 		);
+		$testRepo = new \TYPO3\CMS\Extensionmanager\Domain\Model\Repository();
+		$testRepo->_setClone(TRUE);
 
 		$uploader = $this->getMock('T3x\ExtensionUploader\Upload\Uploader');
 		$uploader->expects($this->once())->method('setExtension')->with($extension);
 		$uploader->expects($this->once())->method('setSettings')->with($settings);
+		$uploader->expects($this->once())->method('setRepository')->with($testRepo);
 		$uploader->expects($this->once())->method('validate')->will($this->throwException($exception));
 
 		$repository = $this->getMock('T3x\ExtensionUploader\Domain\Repository\LocalExtensionRepository');
 		$repository->expects($this->once())->method('findOneByExtensionKey')->with('extension_uploader')->will($this->returnValue($extension));
 
 		$controller = $this->getMock('T3x\ExtensionUploader\Controller\UploaderController', array('redirect'));
-		$controller->expects($this->once())->method('redirect')->with('settings', NULL, NULL, array('extensionKey' => 'extension_uploader'));
+		$controller->expects($this->once())->method('redirect')->with('settings', NULL, NULL, array('extensionKey' => 'extension_uploader', 'settings' => $settings));
 
 		$flashMessages = $this->getMock('TYPO3\CMS\Extbase\Mvc\Controller\FlashMessageContainer');
 		$flashMessages->expects($this->once())->method('add')->with(LocalizationUtility::translate('exception.1', 'extension_uploader'), '', \TYPO3\CMS\Core\Messaging\FlashMessage::ERROR);
@@ -138,6 +164,6 @@ class UploaderControllerTest extends BaseTestCase {
 		$controller->injectUploader($uploader);
 		$controller->injectExtensions($repository);
 		$controller->injectFlashMessageContainer($flashMessages);
-		$controller->uploadAction('extension_uploader', $settings);
+		$controller->uploadAction('extension_uploader', $settings, $testRepo);
 	}
 }

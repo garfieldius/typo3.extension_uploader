@@ -148,16 +148,16 @@
 				<source>The set state is not supported, please keep to the options in the dropdown.</source>
 			</trans-unit>
 			<trans-unit id="exception.1360445519">
-				<source>No version number has been provided. Please set your release version properly.</source>
+				<source>No version number has been provided.</source>
 			</trans-unit>
 			<trans-unit id="exception.1360445614">
 				<source>No release type has been set. This is required to properly set your release version number.</source>
 			</trans-unit>
 			<trans-unit id="exception.1360445797">
-				<source>Custom release version number has not a correct format. Use a semver version number like 1.2.33</source>
+				<source>Custom release version number has not a correct format. A semver version number like 1.2.33 is expected.</source>
 			</trans-unit>
 			<trans-unit id="exception.1360445899">
-				<source>The release type provided is not valid, use one of 'major', 'minor', 'bugfix' or 'custom'</source>
+				<source>The release type provided is not valid, one of 'major', 'minor', 'bugfix' or 'custom' is expected.</source>
 			</trans-unit>
 			<trans-unit id="exception.1360446051">
 				<source>The selected release version is lower than the currently loaded. A new release must have a higher release number.</source>
@@ -181,7 +181,10 @@
 				<source>The soap extension is not available. It is required to communicate with the TER.</source>
 			</trans-unit>
 			<trans-unit id="exception.1360448742">
-				<source>Connection error when trying to connect to the repository.</source>
+				<source>Connection error when trying to contact the repository.</source>
+			</trans-unit>
+			<trans-unit id="exception.1361042666">
+				<source>No SOAP client has been created.</source>
 			</trans-unit>
 		</body>
 	</file>

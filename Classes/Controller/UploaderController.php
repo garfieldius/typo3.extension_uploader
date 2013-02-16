@@ -41,7 +41,7 @@ class UploaderController extends ActionController {
 	/**
 	 * @var \TYPO3\CMS\Extensionmanager\Domain\Repository\RepositoryRepository
 	 */
-	protected $terRepository;
+	protected $repositories;
 
 	/**
 	 * Injects the installed extensions repository
@@ -69,10 +69,10 @@ class UploaderController extends ActionController {
 	}
 
 	/**
-	 * @param \TYPO3\CMS\Extensionmanager\Domain\Repository\RepositoryRepository $terRepository
+	 * @param \TYPO3\CMS\Extensionmanager\Domain\Repository\RepositoryRepository $repositories
 	 */
-	public function injectTerRepository(\TYPO3\CMS\Extensionmanager\Domain\Repository\RepositoryRepository $terRepository) {
-		$this->terRepository = $terRepository;
+	public function injectRepositories(\TYPO3\CMS\Extensionmanager\Domain\Repository\RepositoryRepository $repositories) {
+		$this->repositories = $repositories;
 	}
 
 	public function listAction() {
@@ -83,13 +83,15 @@ class UploaderController extends ActionController {
 	 * Set release options
 	 *
 	 * @param string $extensionKey
+	 * @param array $settings
 	 * @return void
 	 */
-	public function settingsAction($extensionKey) {
+	public function settingsAction($extensionKey, array $settings = array()) {
 		$this->view->assignMultiple(array(
-			'extension' => $this->extensions->findOneByExtensionKey($extensionKey),
-			'states' => $this->statesUtility->getStates(),
-			'repositories' => $this->terRepository->findAll()
+			'extension'    => $this->extensions->findOneByExtensionKey($extensionKey),
+			'states'       => $this->statesUtility->getStates(),
+			'repositories' => $this->repositories->findAll(),
+			'settings'     => $settings
 		));
 	}
 
@@ -116,7 +118,7 @@ class UploaderController extends ActionController {
 		} catch (\T3x\ExtensionUploader\UploaderException $e) {
 			$message = LocalizationUtility::translate('exception.' . $e->getCode(), 'extension_uploader');
 			$this->flashMessageContainer->add($message, '', FlashMessage::ERROR);
-			$this->redirect('settings', NULL, NULL, array('extensionKey' => $extensionKey));
+			$this->redirect('settings', NULL, NULL, array('extensionKey' => $extensionKey, 'settings' => $settings));
 		}
 	}
 }
