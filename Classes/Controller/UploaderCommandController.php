@@ -66,24 +66,27 @@ class UploaderCommandController extends CommandController {
 	 * @return void
 	 */
 	public function uploadCommand($extkey, $username, $password, $state = '', $release = '', $version = '', $comment = '') {
-		if (!empty($version)) {
-			$release = 'custom';
-		}
-		if (empty($state)) {
-			$stateId = $this->extensions->findOneByExtensionKey($extkey)->getState();
-		} else {
-			$dummyObject = new \T3x\ExtensionUploader\Domain\Model\LocalExtension();
-			$stateId = -1;
-			foreach ($dummyObject->getDefaultState() as $index => $key) {
-				if ($key === $state) {
-					$stateId = $index;
-					break;
+		try {
+			$extension = $this->extensions->findOneByExtensionKey($extkey);
+
+			if (!empty($version)) {
+				$release = 'custom';
+			}
+
+			if (empty($state)) {
+				$stateId = $extension->getState();
+			} else {
+				$dummyObject = new \T3x\ExtensionUploader\Domain\Model\LocalExtension();
+				$stateId = -1;
+				foreach ($dummyObject->getDefaultState() as $index => $key) {
+					if ($key === $state) {
+						$stateId = $index;
+						break;
+					}
 				}
 			}
-		}
 
-		try {
-			$this->uploader->setExtension($this->extensions->findOneByExtensionKey($extkey));
+			$this->uploader->setExtension($extension);
 			$this->uploader->setRepository($this->repositories->findOneTypo3OrgRepository());
 			$this->uploader->setSettings(array(
 				'state'         => $stateId,
