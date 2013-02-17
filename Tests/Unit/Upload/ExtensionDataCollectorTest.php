@@ -55,10 +55,10 @@ class ExtensionDataCollectorTest extends BaseTestCase {
 			'extensionKey' => utf8_encode($extension->getExtensionKey()),
 			'version'      => utf8_encode($settings['version']),
 			'metaData'     => array(
-				'title'         => utf8_encode($extension->getTitle()),
+				'title'          => utf8_encode($extension->getTitle()),
 				'description'   => utf8_encode($extension->getDescription()),
-				'category'      => utf8_encode($extension->getCategory()),
-				'state'         => utf8_encode($settings['state']),
+				'category'       => utf8_encode($extension->getCategory()),
+				'state'          => utf8_encode($settings['state']),
 				'authorName'    => utf8_encode($extension->getAuthorName()),
 				'authorEmail'   => utf8_encode($extension->getAuthorEmail()),
 				'authorCompany' => utf8_encode($extension->getAuthorCompany())

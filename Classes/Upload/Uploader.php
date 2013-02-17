@@ -178,6 +178,7 @@ class Uploader {
 			$this->settings['username'],
 			$this->settings['password']
 		);
+		$connection->login();
 		$connection->uploadExtension(array(
 			'accountData'   => array(
 				'username'  => $this->settings['username'],

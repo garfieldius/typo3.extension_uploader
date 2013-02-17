@@ -40,6 +40,9 @@ class Connection {
 	 */
 	protected $client;
 
+
+	protected $token = NULL;
+
 	/**
 	 * @param \SoapClient $client
 	 */
@@ -111,19 +114,49 @@ class Connection {
 
 	/**
 	 * @param array $data
-	 * @throws ConnectionException
 	 * @return array
 	 */
 	public function uploadExtension(array $data) {
+		return $this->doRequest('uploadExtension', $data);
+	}
+
+	public function login() {
+		$this->doRequest('login', array(
+			'username' => $this->username,
+			'password' => $this->password
+		));
+	}
+
+	/**
+	 * @param $function
+	 * @param array $data
+	 * @return array
+	 * @throws ConnectionException
+	 */
+	protected function doRequest($function, array $data) {
 		try {
 			if ($this->client instanceof \SoapClient !== TRUE) {
 				throw new ConnectionException('No soap client set', 1361042666);
 			}
+
 			$authHeader = new \stdClass();
-			$authHeader->username = $this->username;
-			$authHeader->password = $this->password;
-			$soapHeader = new \SoapHeader('', 'HeaderLogin', $authHeader, TRUE);
-			return $this->client->__soapCall('uploadExtension', $data, NULL, $soapHeader);
+
+			if ($this->token) {
+				$authHeaderName = 'HeaderAuthenticate';
+				$authHeader->reactid = $this->token;
+			} else {
+				$authHeaderName = 'HeaderLogin';
+				$authHeader->username = $this->username;
+				$authHeader->password = $this->password;
+			}
+
+			$soapHeader = new \SoapHeader('', $authHeaderName, $authHeader, TRUE);
+			$response   = $this->client->__soapCall($function, $data, NULL, $soapHeader);
+
+			if (property_exists($this->client, 'headersIn') && is_object($this->client->headersIn['HeaderAuthenticate'])) {
+				$this->token = $this->client->headersIn['HeaderAuthenticate']->reactid;
+			}
+			return $response;
 		} catch (\SoapFault $exception) {
 			throw $this->soapFaultToInternalException($exception);
 		}

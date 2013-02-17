@@ -247,6 +247,9 @@ class UploaderTest extends BaseTestCase {
 			->expects($this->once())
 			->method('uploadExtension')
 			->with($data);
+		$connection
+			->expects($this->once())
+			->method('login');
 
 		$objects = $this->getMock('T3x\ExtensionUploader\Utility\ObjectUtility');
 		$objects
