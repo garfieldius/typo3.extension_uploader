@@ -120,8 +120,9 @@ class UploaderCommandController extends CommandController {
 			$this->uploader->validate();
 			$this->uploader->upload();
 
-			$message = LocalizationUtility::translate('upload.success.cli', 'extension_uploader', array($extkey, $version));
+			$message = LocalizationUtility::translate('upload.success.cli', 'extension_uploader', array($extkey));
 		} catch (\T3x\ExtensionUploader\UploaderException $e) {
+			echo (string) $e->getPrevious();
 			$message = LocalizationUtility::translate('exception.' . $e->getCode(), 'extension_uploader');
 		}
 		$this->outputLine($message);

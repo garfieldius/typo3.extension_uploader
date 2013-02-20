@@ -72,8 +72,9 @@ class FilesCollector implements SingletonInterface {
 	 */
 	public function collectFilesOfExtension($extensionKey) {
 		$uploadFilesList = array();
-		$filesList    = $this->collectAllFilesInDirectory(ExtensionManagementUtility::extPath($extensionKey));
-		$absolutePrefixLength = strlen(ExtensionManagementUtility::extPath($extensionKey));
+		$path         = PATH_site . 'typo3conf/ext/' . $extensionKey . '/';
+		$filesList    = $this->collectAllFilesInDirectory($path);
+		$absolutePrefixLength = strlen($path);
 
 		foreach ($filesList as $file) {
 			$file = (string) $file;
