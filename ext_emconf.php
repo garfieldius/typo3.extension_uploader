@@ -9,6 +9,7 @@ $EM_CONF[$_EXTKEY] = array(
 	'author_company' => '',
 	'shy' => '',
 	'priority' => '',
+	'dependencies' => 'extbase,fluid,extensionmanager',
 	'module' => '',
 	'state' => 'beta',
 	'internal' => '',
