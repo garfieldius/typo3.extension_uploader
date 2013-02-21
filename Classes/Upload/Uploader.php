@@ -163,7 +163,7 @@ class Uploader {
 
 		// Validate username
 		if (!preg_match('/^[0-9a-z\-_]{3,}$/', $this->settings['username'])) {
-			throw new ValidationFailedException('Passwort not valid', 1360446444);
+			throw new ValidationFailedException('Username not valid', 1360446444);
 		}
 
 		// Validate password

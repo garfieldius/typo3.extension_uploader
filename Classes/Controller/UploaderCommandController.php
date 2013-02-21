@@ -122,7 +122,6 @@ class UploaderCommandController extends CommandController {
 
 			$message = LocalizationUtility::translate('upload.success.cli', 'extension_uploader', array($extkey));
 		} catch (\T3x\ExtensionUploader\UploaderException $e) {
-			echo (string) $e->getPrevious();
 			$message = LocalizationUtility::translate('exception.' . $e->getCode(), 'extension_uploader');
 		}
 		$this->outputLine($message);

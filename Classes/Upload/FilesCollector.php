@@ -47,7 +47,6 @@ class FilesCollector implements SingletonInterface {
 
 	/**
 	 * Get all files in a directory
-	 * @TODO: Use some TYPO3 API??, might be superfluous
 	 *
 	 * @param string $extensionPath
 	 * @return \RecursiveIteratorIterator
@@ -99,8 +98,8 @@ class FilesCollector implements SingletonInterface {
 				$uploadFilesList[ utf8_encode($relativeFile) ] = array(
 					'name'             => utf8_encode($relativeFile),
 					'size'             => strlen($content),
-					'modificationTime' => intval(filemtime($file)),
-					'isExecutable'     => intval(is_executable($file)),
+					'modificationTime' => (integer) filemtime($file),
+					'isExecutable'     => (integer) is_executable($file),
 					'content'          => $content,
 					'contentMD5'       => $id,
 					'content_md5'      => $id

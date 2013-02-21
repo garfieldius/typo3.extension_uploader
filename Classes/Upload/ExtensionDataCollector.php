@@ -23,10 +23,10 @@ class ExtensionDataCollector {
 
 	/**
 	 * @param \T3x\ExtensionUploader\Domain\Model\LocalExtension $extension
-	 * @param $settings
+	 * @param array $settings
 	 * @return array
 	 */
-	public function getDataForExtension(LocalExtension $extension, $settings) {
+	public function getDataForExtension(LocalExtension $extension, array $settings) {
 		return array(
 			'extensionKey' => utf8_encode($extension->getExtensionKey()),
 			'version'      => utf8_encode($settings['version']),

@@ -9,7 +9,6 @@
  *                                                                     */
 
 namespace T3x\ExtensionUploader\Utility;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extensionmanager\Domain\Model\Repository;
 use TYPO3\CMS\Core\SingletonInterface;
 use T3x\ExtensionUploader\FileFilter\FileFilterInterface;
@@ -86,7 +85,7 @@ class ObjectUtility implements SingletonInterface {
 					throw new InvalidObjectException('Unknown class ' . $className);
 				}
 
-				$filter = GeneralUtility::makeInstance($className);
+				$filter = $this->objectManager->get($className);
 
 				// Check if object has a filter interface
 				if ($filter instanceof FileFilterInterface) {
@@ -110,12 +109,18 @@ class ObjectUtility implements SingletonInterface {
 	public function getSoapConnectionForRepository(Repository $repository, $username, $password) {
 		$wsdl = $repository->getWsdlUrl();
 		if (!isset($this->connections[$wsdl])) {
-			$connection = $this->objectManager->create('T3x\ExtensionUploader\Upload\Connection');
+			$connection = $this->objectManager->get('T3x\ExtensionUploader\Upload\Connection');
 			$connection->setWsdlUrl($repository->getWsdlUrl());
 			$connection->setUsername($username);
 			$connection->setPassword($password);
 			$connection->setClient($connection->connectClient());
-			$this->signals->dispatch('ExtensionUploader\Utility\ObjectUtility', 'createConnection', array($connection, $repository, $username, $password));
+
+			$this->signals->dispatch(
+				'ExtensionUploader\Utility\ObjectUtility',
+				'createConnection',
+				array($connection, $repository, $username, $password)
+			);
+
 			$this->connections[$wsdl] = $connection;
 		}
 		return $this->connections[$wsdl];

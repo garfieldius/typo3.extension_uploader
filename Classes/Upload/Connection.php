@@ -120,15 +120,8 @@ class Connection {
 		return $this->doRequest('uploadExtension', $data);
 	}
 
-	public function login() {
-		$this->doRequest('login', array(
-			'username' => $this->username,
-			'password' => $this->password
-		));
-	}
-
 	/**
-	 * @param $function
+	 * @param string $function
 	 * @param array $data
 	 * @return array
 	 * @throws ConnectionException
@@ -153,7 +146,11 @@ class Connection {
 			$soapHeader = new \SoapHeader('', $authHeaderName, $authHeader, TRUE);
 			$response   = $this->client->__soapCall($function, $data, NULL, $soapHeader);
 
-			if (property_exists($this->client, 'headersIn') && is_object($this->client->headersIn['HeaderAuthenticate'])) {
+			if (
+				property_exists($this->client, 'headersIn') &&
+				isset($this->client->headersIn['HeaderAuthenticate']) &&
+				is_object($this->client->headersIn['HeaderAuthenticate'])
+			) {
 				$this->token = $this->client->headersIn['HeaderAuthenticate']->reactid;
 			}
 			return $response;
