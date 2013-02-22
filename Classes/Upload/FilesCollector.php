@@ -52,14 +52,7 @@ class FilesCollector implements SingletonInterface {
 	 * @return \RecursiveIteratorIterator
 	 */
 	protected function collectAllFilesInDirectory($extensionPath) {
-		return new RecursiveIteratorIterator(
-			new RecursiveDirectoryIterator(
-				$extensionPath,
-				RecursiveDirectoryIterator::FOLLOW_SYMLINKS | RecursiveDirectoryIterator::UNIX_PATHS | RecursiveDirectoryIterator::SKIP_DOTS
-			),
-			RecursiveIteratorIterator::CHILD_FIRST,
-			RecursiveIteratorIterator::LEAVES_ONLY
-		);
+		return GeneralUtility::getAllFilesAndFoldersInPath(array(), $extensionPath, '', TRUE);
 	}
 
 	/**
@@ -72,10 +65,9 @@ class FilesCollector implements SingletonInterface {
 	public function collectFilesOfExtension($extensionKey) {
 		$uploadFilesList = array();
 		$path         = PATH_site . 'typo3conf/ext/' . $extensionKey . '/';
-		$filesList    = $this->collectAllFilesInDirectory($path);
 		$absolutePrefixLength = strlen($path);
 
-		foreach ($filesList as $file) {
+		foreach ($this->collectAllFilesInDirectory($path) as $file) {
 			$file = (string) $file;
 
 			if (is_dir($file)) {
@@ -104,20 +96,8 @@ class FilesCollector implements SingletonInterface {
 					'contentMD5'       => $id,
 					'content_md5'      => $id
 				);
-			} else {
-				$this->excludedFiles[] = $file;
 			}
 		}
 		return $uploadFilesList;
 	}
-
-	/**
-	 * Returns excluded files
-	 *
-	 * @return array
-	 */
-	public function getExcludedFiles() {
-		return $this->excludedFiles;
-	}
-
 }

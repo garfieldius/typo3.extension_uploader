@@ -47,7 +47,15 @@ class ObjectUtilityTest extends BaseTestCase {
 		$signalSlotsDispatcher->expects($this->once())->method('dispatch')->with('ExtensionUploader\Utility\ObjectUtility', 'createFilesCollector', array(&$builtInFilters));
 
 		$objectManager = $this->getMock('TYPO3\CMS\Extbase\Object\ObjectManager');
-		$objectManager->expects($this->once())->method('get')->with('T3x\ExtensionUploader\Upload\FilesCollector')->will($this->returnValue($filesCollector));
+		$objectManager->expects($this->at(0))->method('get')->with('T3x\ExtensionUploader\Upload\FilesCollector')->will($this->returnValue($filesCollector));
+
+		foreach ($builtInFilters as $i => $filterName) {
+			$filterClass = 'T3x\ExtensionUploader\FileFilter\\' . $filterName . 'Filter';
+			$objectManager
+				->expects($this->at($i+1))
+				->method('get')->with($filterClass)
+				->will($this->returnValue(\TYPO3\CMS\Core\Utility\GeneralUtility::makeInstance($filterClass)));
+		}
 
 		$this->util->injectSignals($signalSlotsDispatcher);
 		$this->util->injectObjectManager($objectManager);
@@ -122,7 +130,7 @@ class ObjectUtilityTest extends BaseTestCase {
 		$connection->expects($this->once())->method('setClient')->with($client);
 
 		$objectManager = $this->getMock(get_class($this->objectManager));
-		$objectManager->expects($this->once())->method('create')->with('T3x\ExtensionUploader\Upload\Connection')->will($this->returnValue($connection));
+		$objectManager->expects($this->once())->method('get')->with('T3x\ExtensionUploader\Upload\Connection')->will($this->returnValue($connection));
 
 		$signal = $this->getMock('TYPO3\CMS\Extbase\SignalSlot\Dispatcher');
 		$signal->expects($this->once())->method('dispatch')->with('ExtensionUploader\Utility\ObjectUtility', 'createConnection', array($connection, $repository, $username, $password));

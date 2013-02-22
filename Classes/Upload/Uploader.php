@@ -10,6 +10,7 @@
 
 namespace T3x\ExtensionUploader\Upload;
 use TYPO3\CMS\Core\Utility\VersionNumberUtility;
+use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extensionmanager\Domain\Model\Repository;
 
 /**
@@ -121,7 +122,7 @@ class Uploader {
 			throw new ValidationFailedException('No release type', 1360445614);
 		}
 
-		list($major, $minor, $bugfix) = explode('.', $this->extension->getVersion());
+		list($major, $minor, $bugfix) = GeneralUtility::intExplode('.', $this->extension->getVersion());
 		switch ($this->settings['release']) {
 			case 'major':
 				$major++;
@@ -139,27 +140,28 @@ class Uploader {
 				break;
 
 			case 'custom':
-				if (!preg_match('/^([0-9]{1,})\.([0-9]{1,})\.([0-9]{1,})$/', $this->settings['version'])) {
-					throw new ValidationFailedException('Invalid version number', 1360445797);
-				}
-				list($major, $minor, $bugfix) = explode('.', $this->settings['version']);
+				list($major, $minor, $bugfix) = GeneralUtility::intExplode('.', $this->settings['version']);
 				break;
 
 			default:
 				throw new ValidationFailedException('Invalid release type', 1360445899);
 		}
+
 		$this->settings['version'] = $major . '.' . $minor . '.' . $bugfix;
+		if (!preg_match('/^([0-9]{1,})\.([0-9]{1,})\.([0-9]{1,})$/', $this->settings['version'])) {
+			throw new ValidationFailedException('Invalid version number', 1360445797);
+		}
 
 		if (VersionNumberUtility::convertVersionNumberToInteger($this->settings['version']) <= VersionNumberUtility::convertVersionNumberToInteger($this->extension->getVersion())) {
 			throw new ValidationFailedException('Release version lower than released version', 1360446051);
 		}
 
-		$this->settings['username'] = trim($this->settings['username']);
-		$this->settings['password'] = trim($this->settings['password']);
-
 		if (empty($this->settings['username']) || empty($this->settings['password'])) {
 			throw new ValidationFailedException('Incomplete credentials', 1360446180);
 		}
+
+		$this->settings['username'] = trim($this->settings['username']);
+		$this->settings['password'] = trim($this->settings['password']);
 
 		// Validate username
 		if (!preg_match('/^[0-9a-z\-_]{3,}$/', $this->settings['username'])) {

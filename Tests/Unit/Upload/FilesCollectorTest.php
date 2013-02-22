@@ -10,6 +10,7 @@
 
 namespace T3x\ExtensionUploader\Tests\Unit\Upload;
 use TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase;
+use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
 /**
  * Test for the files collector
@@ -31,13 +32,16 @@ class FilesCollectorTest extends BaseTestCase {
 			for ($i=0; $i < $length; $i++) {
 				$content .= substr($chars, mt_rand(0, $charLength), 1);
 			}
-			file_put_contents(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('extension_uploader') . $filename, $content);
+			file_put_contents(ExtensionManagementUtility::extPath('extension_uploader') . $filename, $content);
 		}
 	}
 
 	public function tearDown() {
 		foreach (array('testA', 'testB', 'testC', '.gitinfo') as $filename) {
-			unlink(\TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('extension_uploader') . $filename);
+			$file = ExtensionManagementUtility::extPath('extension_uploader') . $filename;
+			if (is_file($file)) {
+				unlink($file);
+			}
 		}
 	}
 
@@ -46,7 +50,7 @@ class FilesCollectorTest extends BaseTestCase {
 		$expected = array();
 		$files = array();
 		foreach (array('testA', 'testB', 'testC') as $filename) {
-			$file = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('extension_uploader') . $filename;
+			$file = ExtensionManagementUtility::extPath('extension_uploader') . $filename;
 			$content = file_get_contents($file);
 			$id = md5($content);
 			$expected[ $filename ] =  array(
@@ -74,10 +78,10 @@ class FilesCollectorTest extends BaseTestCase {
 	public function testCollectingNotAccessibleFileThrowsException() {
 		$files = array();
 		foreach (array('testA', 'testB', 'notExistingC') as $filename) {
-			$file = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('extension_uploader') . $filename;
+			$file = ExtensionManagementUtility::extPath('extension_uploader') . $filename;
 			$files[] = $file;
 		}
-		$path = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('extension_uploader');
+		$path = ExtensionManagementUtility::extPath('extension_uploader');
 
 		$collector = $this->getMock('T3x\ExtensionUploader\Upload\FilesCollector', array('collectAllFilesInDirectory'));
 		$collector->expects($this->once())->method('collectAllFilesInDirectory')->with($path)->will($this->returnValue($files));
@@ -86,38 +90,83 @@ class FilesCollectorTest extends BaseTestCase {
 		$collector->collectFilesOfExtension('extension_uploader');
 	}
 
-	public function testGetExcludedFiles() {
+	public function testFilesCollectorGrabsAllFilesInAnExtensionDirectory() {
+		$this->tearDown();
 
-		$expectedIncluded = array();
-		$expectedExcluded = array();
-		$files = array();
-		foreach (array('testA', 'testB', 'testC', '.gitinfo') as $filename) {
-			$file = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('extension_uploader') . $filename;
-			if ($filename === '.gitinfo') {
-				$expectedExcluded[] = $file;
-			} else {
-				$content = file_get_contents($file);
-				$id = md5($content);
-				$expectedIncluded[ $filename ] =  array(
-					'name'             => utf8_encode($filename),
-					'size'             => strlen($content),
-					'modificationTime' => intval(filemtime($file)),
-					'isExecutable'     => intval(is_executable($file)),
-					'content'          => $content,
-					'contentMD5'       => $id,
-					'content_md5'      => $id
-				);
-			}
-			$files[] = $file;
-		}
-		$path = \TYPO3\CMS\Core\Utility\ExtensionManagementUtility::extPath('extension_uploader');
-
-		$collector = $this->getMock('T3x\ExtensionUploader\Upload\FilesCollector', array('collectAllFilesInDirectory'));
-		$collector->expects($this->once())->method('collectAllFilesInDirectory')->with($path)->will($this->returnValue($files));
+		// TODO: This hardcoded list is not a good idea, replace it with something better yet as reliable
+		$expected = array(
+			'ext_icon.gif',
+			'ext_localconf.php',
+			'ext_tables.php',
+			'ext_typoscript_setup.txt',
+			'Readme.rst',
+			'Classes/UploaderException.php',
+			'Classes/Controller/UploaderCommandController.php',
+			'Classes/Controller/UploaderController.php',
+			'Classes/Domain/Model/LocalExtension.php',
+			'Classes/Domain/Repository/LocalExtensionRepository.php',
+			'Classes/Domain/Repository/UnknownExtensionException.php',
+			'Classes/FileFilter/ExtensionBuilderFilter.php',
+			'Classes/FileFilter/ExtensionManagerMetaDataFilter.php',
+			'Classes/FileFilter/FileFilterInterface.php',
+			'Classes/FileFilter/SystemMetaDataFilter.php',
+			'Classes/FileFilter/VcsMetaDataFilter.php',
+			'Classes/Upload/Connection.php',
+			'Classes/Upload/ConnectionException.php',
+			'Classes/Upload/ExtensionDataCollector.php',
+			'Classes/Upload/FilesCollector.php',
+			'Classes/Upload/NoFileAccessException.php',
+			'Classes/Upload/Uploader.php',
+			'Classes/Upload/ValidationFailedException.php',
+			'Classes/Utility/InvalidObjectException.php',
+			'Classes/Utility/ObjectUtility.php',
+			'Classes/Utility/StatesUtility.php',
+			'Classes/ViewHelpers/BackendContainerViewHelper.php',
+			'Documentation/Index.rst',
+			'Documentation/License.rst',
+			'Documentation/Useage.rst',
+			'Documentation/Images/List.png',
+			'Documentation/Images/Overview.png',
+			'Documentation/Images/Settings.png',
+			'Resources/Private/.htaccess',
+			'Resources/Private/Language/locallang.xlf',
+			'Resources/Private/Layouts/Default.html',
+			'Resources/Private/Templates/Uploader/List.html',
+			'Resources/Private/Templates/Uploader/Settings.html',
+			'Resources/Public/Javascript/List.js',
+			'Resources/Public/Javascript/Settings.js',
+			'Resources/Public/Stylesheet/Uploader.css',
+			'Tests/Unit/Controller/UploaderCommandControllerTest.php',
+			'Tests/Unit/Controller/UploaderControllerTest.php',
+			'Tests/Unit/Domain/Model/LocalExtensionTest.php',
+			'Tests/Unit/Domain/Repository/LocalExtensionRepositoryTest.php',
+			'Tests/Unit/FileFilter/ExtensionBuilderFilterTest.php',
+			'Tests/Unit/FileFilter/ExtensionManagerMetaDataFilterTest.php',
+			'Tests/Unit/FileFilter/SystemMetaDataFilterTest.php',
+			'Tests/Unit/FileFilter/VcsMetaDataFilterTest.php',
+			'Tests/Unit/Upload/ConnectionTest.php',
+			'Tests/Unit/Upload/ExtensionDataCollectorTest.php',
+			'Tests/Unit/Upload/FilesCollectorTest.php',
+			'Tests/Unit/Upload/UploaderTest.php',
+			'Tests/Unit/Utility/ObjectUtilityTest.php',
+			'Tests/Unit/Utility/StatesUtilityTest.php'
+		);
+		$collector = $this->objectManager->get('T3x\ExtensionUploader\Upload\FilesCollector');
 
 		$collector->addFilesFilter(new \T3x\ExtensionUploader\FileFilter\VcsMetaDataFilter());
-		$actualIncluded = $collector->collectFilesOfExtension('extension_uploader');
-		$this->assertEquals($expectedIncluded, $actualIncluded);
-		$this->assertEquals($expectedExcluded, $collector->getExcludedFiles());
+		$collector->addFilesFilter(new \T3x\ExtensionUploader\FileFilter\ExtensionBuilderFilter());
+		$collector->addFilesFilter(new \T3x\ExtensionUploader\FileFilter\SystemMetaDataFilter());
+		$collector->addFilesFilter(new \T3x\ExtensionUploader\FileFilter\ExtensionManagerMetaDataFilter());
+		$actual = $collector->collectFilesOfExtension('extension_uploader');
+
+		$this->assertEquals(count($expected), count($actual));
+
+		foreach ($actual as $fileInfo) {
+			$this->assertTrue(in_array($fileInfo['name'], $expected, TRUE), 'Unexpected file ' . $fileInfo['name']);
+			$expected = array_filter($expected, function($file) use($fileInfo) {
+				return $file !== $fileInfo['name'];
+			});
+		}
+		$this->assertEquals(0, count($expected), count($expected) . " expected files have not been found, first: " . $expected[0]);
 	}
 }

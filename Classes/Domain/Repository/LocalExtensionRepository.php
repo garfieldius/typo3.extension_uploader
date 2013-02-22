@@ -24,7 +24,6 @@ use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 class LocalExtensionRepository extends ExtensionRepository {
 
 	/**
-	 * @inject
 	 * @var \TYPO3\CMS\Extensionmanager\Utility\ListUtility
 	 */
 	protected $listUtility;
@@ -60,6 +59,7 @@ class LocalExtensionRepository extends ExtensionRepository {
 				continue;
 			}
 
+			/* @var $extension \T3x\ExtensionUploader\Domain\Model\LocalExtension */
 			if (isset($extensionConfig['terObject']) && $extensionConfig['terObject'] instanceof \TYPO3\CMS\Extensionmanager\Domain\Model\Extension) {
 				$extension = $this->findOneByExtensionKeyAndVersion($extKey, $extensionConfig['terObject']->getVersion());
 				$extension->setKnownToTer(TRUE);
@@ -68,7 +68,7 @@ class LocalExtensionRepository extends ExtensionRepository {
 				$extension->setExtensionKey($extKey);
 				$extension->setKnownToTer(FALSE);
 			}
-			/* @var $extension \T3x\ExtensionUploader\Domain\Model\LocalExtension */
+
 			$extension->setVersion($extensionConfig['version']);
 			$extension->setTitle($extensionConfig['title']);
 			$extension->setLoaded(ExtensionManagementUtility::isLoaded($extKey));
