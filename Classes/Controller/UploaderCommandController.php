@@ -38,6 +38,11 @@ class UploaderCommandController extends CommandController {
 	protected $repositories;
 
 	/**
+	 * @var \T3x\ExtensionUploader\Utility\StatesUtility
+	 */
+	protected $statesUtility;
+
+	/**
 	 * @param \T3x\ExtensionUploader\Upload\Uploader $uploader
 	 */
 	public function injectUploader(\T3x\ExtensionUploader\Upload\Uploader $uploader) {
@@ -56,6 +61,13 @@ class UploaderCommandController extends CommandController {
 	 */
 	public function injectRepositories(\TYPO3\CMS\Extensionmanager\Domain\Repository\RepositoryRepository $repositories) {
 		$this->repositories = $repositories;
+	}
+
+	/**
+	 * @param \T3x\ExtensionUploader\Utility\StatesUtility $statesUtility
+	 */
+	public function injectStatesUtility(\T3x\ExtensionUploader\Utility\StatesUtility $statesUtility) {
+		$this->statesUtility = $statesUtility;
 	}
 
 	/**
@@ -97,14 +109,7 @@ class UploaderCommandController extends CommandController {
 			if (empty($state)) {
 				$stateId = $extension->getState();
 			} else {
-				$dummyObject = new \T3x\ExtensionUploader\Domain\Model\LocalExtension();
-				$stateId = -1;
-				foreach ($dummyObject->getDefaultState() as $index => $key) {
-					if ($key === $state) {
-						$stateId = $index;
-						break;
-					}
-				}
+				$stateId = $this->statesUtility->getStateIdForKey($state);
 			}
 
 			$this->uploader->setExtension($extension);

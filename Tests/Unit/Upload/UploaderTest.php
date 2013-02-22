@@ -119,6 +119,19 @@ class UploaderTest extends BaseTestCase {
 	/**
 	 * @expectedException \T3x\ExtensionUploader\Upload\ValidationFailedException
 	 */
+	public function testValidateThrowsExceptionIfNoReleaseTypeIsSet() {
+		$this->uploader->setSettings(array(
+			'state' => 1,
+			'version' => '3.2.1',
+			'username' => 'my_own_user',
+			'password' => 'verySecurePassword'
+		));
+		$this->uploader->validate();
+	}
+
+	/**
+	 * @expectedException \T3x\ExtensionUploader\Upload\ValidationFailedException
+	 */
 	public function testValidateThrowsExceptionIfInvalidReleaseType() {
 		$this->uploader->setSettings(array(
 			'state' => 1,
@@ -192,7 +205,7 @@ class UploaderTest extends BaseTestCase {
 			'state' => 1,
 			'version' => '3.2.1',
 			'release' => 'major',
-			'username' => 'myUser',
+			'username' => 'myuser',
 			'password' => 'nosec'
 		));
 		$this->uploader->validate();

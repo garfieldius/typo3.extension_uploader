@@ -112,7 +112,7 @@ class LocalExtensionRepository extends ExtensionRepository {
 			if (!empty($extensionConfig['CGLcompliance_note'])) {
 				$extension->setCglComplianceNote($extensionConfig['CGLcompliance_note']);
 			}
-			if (!empty($extensionConfig['uploadFolder'])) {
+			if (!empty($extensionConfig['uploadfolder'])) {
 				$extension->setUploadFolder(TRUE);
 			}
 			if (!empty($extensionConfig['shy'])) {

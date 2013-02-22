@@ -122,7 +122,7 @@ class Uploader {
 			throw new ValidationFailedException('No release type', 1360445614);
 		}
 
-		list($major, $minor, $bugfix) = GeneralUtility::intExplode('.', $this->extension->getVersion());
+		list($major, $minor, $bugfix) = explode('.', $this->extension->getVersion());
 		switch ($this->settings['release']) {
 			case 'major':
 				$major++;
@@ -140,7 +140,7 @@ class Uploader {
 				break;
 
 			case 'custom':
-				list($major, $minor, $bugfix) = GeneralUtility::intExplode('.', $this->settings['version']);
+				list($major, $minor, $bugfix) = explode('.', $this->settings['version']);
 				break;
 
 			default:
