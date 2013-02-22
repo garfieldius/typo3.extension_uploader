@@ -10,6 +10,7 @@
 
 namespace T3x\ExtensionUploader\Domain\Model;
 use TYPO3\CMS\Extensionmanager\Domain\Model\Extension;
+use T3x\ExtensionUploader\UploaderException;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
 /**
@@ -130,6 +131,21 @@ class LocalExtension extends Extension {
 	 */
 	public function getLockType() {
 		return $this->lockType;
+	}
+
+	/**
+	 * @param string $categoryKey
+	 * @return LocalExtension
+	 * @throws \T3x\ExtensionUploader\UploaderException
+	 */
+	public function setCategoryByKey($categoryKey) {
+		foreach (self::$defaultCategories as $index => $key) {
+			if ($key === $categoryKey) {
+				$this->setCategory($index);
+				return $this;
+			}
+		}
+		throw new UploaderException('Invalid category key ' . $categoryKey, 1361548543);
 	}
 
 	/**

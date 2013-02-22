@@ -82,7 +82,6 @@ class Connection {
 
 	/**
 	 * @return \SoapClient
-	 * @throws ConnectionException
 	 */
 	public function connectClient() {
 		if (!filter_var($this->wsdlUrl, FILTER_VALIDATE_URL)) {

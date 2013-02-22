@@ -128,4 +128,16 @@ class LocalExtensionTest extends \PHPUnit_Framework_TestCase {
 		$this->object->setPriority('high');
 		$this->assertEquals('high', $this->object->getPriority());
 	}
+
+	public function testSetCategoryByKey() {
+		$this->object->setCategoryByKey('fe');
+		$this->assertEquals(2, $this->object->getCategory());
+	}
+
+	/**
+	 *  @expectedException \T3x\ExtensionUploader\UploaderException
+	 */
+	public function testSetCategoryByKeyThrowsExceptionIfCategoryIsNotKnown() {
+		$this->object->setCategoryByKey('secret_amory');
+	}
 }

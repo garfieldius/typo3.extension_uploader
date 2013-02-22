@@ -10,6 +10,7 @@
 
 namespace T3x\ExtensionUploader\Utility;
 use TYPO3\CMS\Extensionmanager\Domain\Model\Extension;
+use T3x\ExtensionUploader\UploaderException;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 
 /**
@@ -21,6 +22,11 @@ use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
  * @license GPL v3 http://www.gnu.org/licenses/gpl-3.0.txt
  */
 class StatesUtility {
+
+	/**
+	 * @var array
+	 */
+	protected $keyToIndexMap;
 
 	/**
 	 * @return array
@@ -35,5 +41,32 @@ class StatesUtility {
 			}
 		}
 		return $options;
+	}
+
+	/**
+	 * Get the numeric index of a state by its key
+	 * alpha => 0, beta => 1, ...
+	 *
+	 * @param string $stateKey
+	 * @return integer
+	 * @throws \T3x\ExtensionUploader\UploaderException
+	 */
+	public function getStateIdForKey($stateKey) {
+		if (!$this->keyToIndexMap) {
+
+			$dummyInstance = new Extension();
+			$this->keyToIndexMap = array();
+
+			foreach ($dummyInstance->getDefaultState() as $index => $key) {
+				if ($index < 6) {
+					$this->keyToIndexMap[ $key ] = $index;
+				}
+			}
+		}
+
+		if (!isset($this->keyToIndexMap[$stateKey])) {
+			throw new UploaderException('Invalid state key', 1361547441);
+		}
+		return $this->keyToIndexMap[$stateKey];
 	}
 }

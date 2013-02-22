@@ -29,10 +29,22 @@ class LocalExtensionRepository extends ExtensionRepository {
 	protected $listUtility;
 
 	/**
+	 * @var \T3x\ExtensionUploader\Utility\StatesUtility
+	 */
+	protected $statesUtility;
+
+	/**
 	 * @param \TYPO3\CMS\Extensionmanager\Utility\ListUtility $listUtility
 	 */
 	public function injectListUtility(\TYPO3\CMS\Extensionmanager\Utility\ListUtility $listUtility) {
 		$this->listUtility = $listUtility;
+	}
+
+	/**
+	 * @param \T3x\ExtensionUploader\Utility\StatesUtility $statesUtility
+	 */
+	public function injectStatesUtility(\T3x\ExtensionUploader\Utility\StatesUtility $statesUtility) {
+		$this->statesUtility = $statesUtility;
 	}
 
 	/**
@@ -71,8 +83,10 @@ class LocalExtensionRepository extends ExtensionRepository {
 
 			$extension->setVersion($extensionConfig['version']);
 			$extension->setTitle($extensionConfig['title']);
+			$extension->setDescription($extensionConfig['description']);
 			$extension->setLoaded(ExtensionManagementUtility::isLoaded($extKey));
 			$extension->setSiteRelPath($extensionConfig['siteRelPath']);
+			$extension->setState($this->statesUtility->getStateIdForKey($extensionConfig['state']));
 
 			if (!empty($extensionConfig['constraints']) && is_array($extensionConfig['constraints'])) {
 				$extension->setSerializedDependencies(serialize($extensionConfig['constraints']));
@@ -80,13 +94,22 @@ class LocalExtensionRepository extends ExtensionRepository {
 				$extension->setSerializedDependencies($forcedDefaultDependencies);
 			}
 
+			if (!empty($extensionConfig['category'])) {
+				$extension->setCategoryByKey($extensionConfig['category']);
+			}
+			if (!empty($extensionConfig['author'])) {
+				$extension->setAuthorName($extensionConfig['author']);
+			}
+			if (!empty($extensionConfig['author_email'])) {
+				$extension->setAuthorEmail($extensionConfig['author_email']);
+			}
 			if (!empty($extensionConfig['author_company'])) {
 				$extension->setAuthorCompany($extensionConfig['author_company']);
 			}
 			if (!empty($extensionConfig['CGLcompliance'])) {
 				$extension->setCglCompliance($extensionConfig['CGLcompliance']);
 			}
-			if (!empty($extensionConfig['author_company'])) {
+			if (!empty($extensionConfig['CGLcompliance_note'])) {
 				$extension->setCglComplianceNote($extensionConfig['CGLcompliance_note']);
 			}
 			if (!empty($extensionConfig['uploadFolder'])) {
@@ -102,7 +125,7 @@ class LocalExtensionRepository extends ExtensionRepository {
 				$extension->setCreateDirectories($extensionConfig['createDirs']);
 			}
 			if (!empty($extensionConfig['module'])) {
-				$extension->setCreateDirectories($extensionConfig['module']);
+				$extension->setModule($extensionConfig['module']);
 			}
 			if (!empty($extensionConfig['modify_tables'])) {
 				$extension->setModifiedTables($extensionConfig['modify_tables']);
@@ -111,7 +134,7 @@ class LocalExtensionRepository extends ExtensionRepository {
 				$extension->setPriority($extensionConfig['priority']);
 			}
 			if (!empty($extensionConfig['lockType'])) {
-				$extension->setPriority($extensionConfig['lockType']);
+				$extension->setLockType($extensionConfig['lockType']);
 			}
 			if (!empty($extensionConfig['docPath'])) {
 				$extension->setDocumentationPath($extensionConfig['docPath']);

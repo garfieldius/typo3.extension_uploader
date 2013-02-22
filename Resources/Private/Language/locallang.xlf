@@ -189,6 +189,12 @@
 			<trans-unit id="exception.1361042666">
 				<source>No SOAP client has been created.</source>
 			</trans-unit>
+			<trans-unit id="exception.1361547441">
+				<source>State is not valid. Must be one of 'alpha', 'beta', 'stable', 'experimental', 'test' or 'obsolete'</source>
+			</trans-unit>
+			<trans-unit id="exception.1361548543">
+				<source>Category is not valid. Must be one of 'be', 'module', 'fe', 'plugin', 'misc', 'services', 'templates', 'doc' or 'example'</source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>

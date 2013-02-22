@@ -47,8 +47,11 @@ class LocalExtensionRepositoryTest extends BaseTestCase {
 		$extensionsData = array(
 			'extension_uploader' => array(
 				'title' => 'Extension Uploader',
+				'description' => 'Extension Uploader',
+				'version' => '1.2.3',
 				'terObject' => $fetchedExtension,
-				'siteRelPath' => ExtensionManagementUtility::siteRelPath('extension_uploader')
+				'siteRelPath' => ExtensionManagementUtility::siteRelPath('extension_uploader'),
+				'state' => 'alpha'
 			),
 			'extensionmanager' => array(
 				'title' => 'Extension Manager',
@@ -59,12 +62,15 @@ class LocalExtensionRepositoryTest extends BaseTestCase {
 		$listUtility = $this->getMock('TYPO3\CMS\Extensionmanager\Utility\ListUtility');
 		$listUtility->expects($this->once())->method('getAvailableAndInstalledExtensionsWithAdditionalInformation')->will($this->returnValue($extensionsData));
 
+		$statesUtility = $this->getMock('T3x\ExtensionUploader\Utility\StatesUtility');
+		$statesUtility->expects($this->once())->method('getStateIdForKey')->with('alpha')->will($this->returnValue(0));
 
 		$expected = array(
 			'extension_uploader' => $expectedExtension
 		);
 		$repository = $this->getMock(get_class($this->repository), array('findOneByExtensionKeyAndVersion'));
 		$repository->injectListUtility($listUtility);
+		$repository->injectStatesUtility($statesUtility);
 		$repository->expects($this->once())->method('findOneByExtensionKeyAndVersion')->with($fetchedExtension->getExtensionKey(), $fetchedExtension->getVersion())->will($this->returnValue($expectedExtension));
 		$actual = $repository->findAll();
 
@@ -96,7 +102,8 @@ class LocalExtensionRepositoryTest extends BaseTestCase {
 			'extension_uploader' => array(
 				'title' => 'Extension Uploader',
 				'version' => '1.2.3',
-				'siteRelPath' => ExtensionManagementUtility::siteRelPath('extension_uploader')
+				'siteRelPath' => ExtensionManagementUtility::siteRelPath('extension_uploader'),
+				'state' => 'alpha'
 			),
 			'extensionmanager' => array(
 				'title' => 'Extension Manager',
@@ -107,12 +114,15 @@ class LocalExtensionRepositoryTest extends BaseTestCase {
 		$listUtility = $this->getMock('TYPO3\CMS\Extensionmanager\Utility\ListUtility');
 		$listUtility->expects($this->once())->method('getAvailableAndInstalledExtensionsWithAdditionalInformation')->will($this->returnValue($extensionsData));
 
+		$statesUtility = $this->getMock('T3x\ExtensionUploader\Utility\StatesUtility');
+		$statesUtility->expects($this->once())->method('getStateIdForKey')->with('alpha')->will($this->returnValue(0));
 
 		$expected = array(
 			'extension_uploader' => $expectedExtension
 		);
 
 		$this->repository->injectListUtility($listUtility);
+		$this->repository->injectStatesUtility($statesUtility);
 		$actual = $this->repository->findAll();
 
 		$this->assertEquals($expected, $actual);
@@ -144,6 +154,7 @@ class LocalExtensionRepositoryTest extends BaseTestCase {
 				'title' => 'Extension Uploader',
 				'version' => '1.2.3',
 				'siteRelPath' => ExtensionManagementUtility::siteRelPath('extension_uploader'),
+				'state' => 'alpha',
 				'constraints' => NULL
 			)
 		);
@@ -151,11 +162,15 @@ class LocalExtensionRepositoryTest extends BaseTestCase {
 		$listUtility = $this->getMock('TYPO3\CMS\Extensionmanager\Utility\ListUtility');
 		$listUtility->expects($this->once())->method('getAvailableAndInstalledExtensionsWithAdditionalInformation')->will($this->returnValue($extensionsData));
 
+		$statesUtility = $this->getMock('T3x\ExtensionUploader\Utility\StatesUtility');
+		$statesUtility->expects($this->once())->method('getStateIdForKey')->with('alpha')->will($this->returnValue(0));
+
 		$expected = array(
 			'extension_uploader' => $expectedExtension
 		);
 
 		$this->repository->injectListUtility($listUtility);
+		$this->repository->injectStatesUtility($statesUtility);
 		$actual = $this->repository->findAll();
 
 		$this->assertEquals($expected, $actual);
@@ -186,5 +201,81 @@ class LocalExtensionRepositoryTest extends BaseTestCase {
 	public function testFindOneByExtensionKeyThrowsExceptionIfUnknownExtensionIsRequested() {
 		$extensionKey = 'blabla_ext_' . uniqid();
 		$this->getRepositoryMockForFindOneByExtensionKey()->findOneByExtensionKey($extensionKey);
+	}
+
+	public function testExtensionNotKnownToTerHasAllPropertiesSetViaEmconfData() {
+
+		$extensionData = array(
+			'dummy_extension' => array(
+				'siteRelPath' => str_replace(PATH_site, '', PATH_typo3conf . 'ext/dummy_extension/'),
+				'title' => 'Dummy Extension',
+				'description' => 'Some dummy extension data for testing',
+				'category' => 'module',
+				'author' => 'John Doe',
+				'author_email' => 'john@doe.com',
+				'author_company' => 'Doe Inc.',
+				'shy' => '1',
+				'priority' => 'top',
+				'dependencies' => 'extbase,fluid,extensionmanager',
+				'module' => 'mod1',
+				'state' => 'beta',
+				'internal' => '0',
+				'uploadfolder' => '0',
+				'createDirs' => 'folder1/folder2',
+				'modify_tables' => 'tt_content',
+				'clearCacheOnLoad' => 0,
+				'lockType' => 'xy',
+				'version' => '1.2.3',
+				'CGLcompliance' => 'Pretty good',
+				'CGLcompliance_note' => 'What else?',
+				'docPath' => 'doc/',
+				'constraints' => array(
+					'depends' => array(
+						'extbase' => '6.0-6.9.99',
+						'fluid' => '6.0-6.9.99',
+						'typo3' => '6.0-6.9.99',
+						'extensionmanager' => '6.0.0-6.9.99',
+					),
+					'conflicts' => array(
+					),
+					'suggests' => array(
+					),
+				),
+			)
+		);
+
+		$listUtility = $this->getMock('TYPO3\CMS\Extensionmanager\Utility\ListUtility');
+		$listUtility
+			->expects($this->once())
+			->method('getAvailableAndInstalledExtensionsWithAdditionalInformation')
+			->will($this->returnValue($extensionData));
+
+		$statesUtility = $this->objectManager->get('T3x\ExtensionUploader\Utility\StatesUtility');
+
+		$this->repository->injectListUtility($listUtility);
+		$this->repository->injectStatesUtility($statesUtility);
+		$actual = $this->repository->findOneByExtensionKey('dummy_extension');
+
+		$this->assertEquals('dummy_extension', $actual->getExtensionKey());
+		$this->assertEquals(1, $actual->getState());
+		$this->assertEquals($extensionData['dummy_extension']['state'], $actual->getStateKey());
+		$this->assertEquals($extensionData['dummy_extension']['title'], $actual->getTitle());
+		$this->assertEquals($extensionData['dummy_extension']['description'], $actual->getDescription());
+		$this->assertEquals(1, $actual->getCategory());
+		$this->assertEquals($extensionData['dummy_extension']['author'], $actual->getAuthorName());
+		$this->assertEquals($extensionData['dummy_extension']['author_email'], $actual->getAuthorEmail());
+		$this->assertEquals($extensionData['dummy_extension']['author_company'], $actual->getAuthorCompany());
+		$this->assertEquals((boolean) $extensionData['dummy_extension']['shy'], $actual->getShy());
+		$this->assertEquals($extensionData['dummy_extension']['priority'], $actual->getPriority());
+		$this->assertEquals($extensionData['dummy_extension']['module'], $actual->getModule());
+		$this->assertEquals((boolean) $extensionData['dummy_extension']['uploadfolder'], $actual->getUploadFolder());
+		$this->assertEquals($extensionData['dummy_extension']['createDirs'], $actual->getCreateDirectories());
+		$this->assertEquals($extensionData['dummy_extension']['modify_tables'], $actual->getModifiedTables());
+		$this->assertEquals((boolean) $extensionData['dummy_extension']['clearCacheOnLoad'], $actual->getClearCachesOnLoad());
+		$this->assertEquals($extensionData['dummy_extension']['lockType'], $actual->getLockType());
+		$this->assertEquals($extensionData['dummy_extension']['version'], $actual->getVersion());
+		$this->assertEquals($extensionData['dummy_extension']['docPath'], $actual->getDocumentationPath());
+		$this->assertEquals($extensionData['dummy_extension']['CGLcompliance'], $actual->getCglCompliance());
+		$this->assertEquals($extensionData['dummy_extension']['CGLcompliance_note'], $actual->getCglComplianceNote());
 	}
 }

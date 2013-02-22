@@ -22,8 +22,20 @@ use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
  */
 class StatesUtilityTest extends BaseTestCase {
 
+	/**
+	 * @var \T3x\ExtensionUploader\Utility\StatesUtility
+	 */
+	protected $util;
+
+	protected function setUp() {
+		$this->util = $this->objectManager->get('T3x\ExtensionUploader\Utility\StatesUtility');
+	}
+
+	protected function tearDown() {
+		$this->util = NULL;
+	}
+
 	public function testGetStatesReturnsValidStates() {
-		$utility = $this->objectManager->create('T3x\ExtensionUploader\Utility\StatesUtility');
 		$expected = array(
 			0 => LocalizationUtility::translate('state.alpha', 'extension_uploader'),
 			1 => LocalizationUtility::translate('state.beta', 'extension_uploader'),
@@ -32,6 +44,24 @@ class StatesUtilityTest extends BaseTestCase {
 			4 => LocalizationUtility::translate('state.test', 'extension_uploader'),
 			5 => LocalizationUtility::translate('state.obsolete', 'extension_uploader')
 		);
-		$this->assertEquals($expected, $utility->getStates());
+		$this->assertEquals($expected, $this->util->getStates());
+	}
+
+	public function testGetStateIdForKeyReturnsValidIndex() {
+		$this->assertEquals(0, $this->util->getStateIdForKey('alpha'));
+		$this->assertEquals(1, $this->util->getStateIdForKey('beta'));
+		$this->assertEquals(2, $this->util->getStateIdForKey('stable'));
+		$this->assertEquals(3, $this->util->getStateIdForKey('experimental'));
+		$this->assertEquals(4, $this->util->getStateIdForKey('test'));
+		$this->assertEquals(5, $this->util->getStateIdForKey('obsolete'));
+	}
+
+	/**
+	 * @expectedException \T3x\ExtensionUploader\UploaderException
+	 */
+	public function testInvalidStateThrowsException() {
+		$this->util->getStateIdForKey('alpha');
+		$this->util->getStateIdForKey('beta');
+		$this->util->getStateIdForKey('gamma');
 	}
 }

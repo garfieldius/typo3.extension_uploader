@@ -94,6 +94,10 @@ class ConnectionTest extends BaseTestCase {
 		$this->object->uploadExtension($data);
 	}
 
+	/**
+	 *
+	 * @covers \T3x\ExtensionUploader\Upload\Connection::connectClient
+	 */
 	public function testconnectClient() {
 		$this->object->setWsdlUrl('http://typo3.org/wsdl/tx_ter_wsdl.php');
 		$this->object->setUsername('myUser');
@@ -122,5 +126,50 @@ class ConnectionTest extends BaseTestCase {
 		$this->object->setUsername('myUser');
 		$this->object->setPassword('verySecurePassword');
 		$this->object->connectClient();
+	}
+
+	/**
+	 * @expectedException \T3x\ExtensionUploader\Upload\ConnectionException
+	 */
+	public function testRequestCallThrowsExceptionIfNoClientIsSet() {
+		$this->object->uploadExtension(array());
+	}
+
+	public function testReactIdIsUsedOnSecondCallIfItHasBeenProvidedInTheFirstCallsResponse() {
+
+		$token = md5(uniqid());
+		$username = 'myUser';
+		$password = 'verySecurePassword';
+
+		$header1 = new \stdClass();
+		$header1->username = $username;
+		$header1->password = $password;
+		$header1 = new \SoapHeader('', 'HeaderLogin', $header1, TRUE);
+
+		$header2 = new \stdClass();
+		$header2->reactid = $token;
+		$header2 = new \SoapHeader('', 'HeaderAuthenticate', $header1, TRUE);
+
+		$client = $this->getMock('SoapClient', array(), array(), '', FALSE);
+		$client
+			->expects($this->at(0))
+			->method('__soapCall')
+			->with('uploadExtension', array(), NULL, $header1);
+		$client
+			->expects($this->at(1))
+			->method('__soapCall')
+			->with('uploadExtension', array(), NULL, $header2);
+
+		$headerIn = new \stdClass();
+		$headerIn->reactid = $token;
+		$client->headersIn = array(
+			'HeaderAuthenticate' => $headerIn
+		);
+
+		$this->object->setClient($client);
+		$this->object->setUsername($username);
+		$this->object->setPassword($username);
+		$this->object->uploadExtension(array());
+		$this->object->uploadExtension(array());
 	}
 }
