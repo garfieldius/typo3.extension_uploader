@@ -225,7 +225,7 @@ class UploaderTest extends BaseTestCase {
 			'password' => 'verySecurePassword'
 		);
 		$extensionData = array(
-			'extKey' => 'dummy_ext',
+			'extKey' => 'some_dummy',
 			'title' => 'Dummy Ext'
 		);
 		$fileData = array(
@@ -273,10 +273,17 @@ class UploaderTest extends BaseTestCase {
 			->method('getFilesCollector')
 			->will($this->returnValue($filesCollector));
 
+		$emconf = $this->getMock('T3x\ExtensionUploader\Upload\EmconfAccess');
+		$emconf
+			->expects($this->once())
+			->method('updateEmconfVersion')
+			->with($extensionData['extKey'], $settings['version']);
+
 		$this->uploader->setRepository($dumyRepo);
 		$this->uploader->setSettings($settings);
 		$this->uploader->injectObjects($objects);
 		$this->uploader->injectDataCollector($dataCollector);
+		$this->uploader->injectEmconfAccess($emconf);
 		$this->uploader->upload();
 	}
 }

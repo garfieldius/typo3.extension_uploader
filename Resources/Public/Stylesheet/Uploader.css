@@ -18,3 +18,9 @@
 .field {
 	padding-bottom: 15px;
 }
+
+#username,
+#password {
+	color: #000 !important;
+	font-weight: normal;
+}

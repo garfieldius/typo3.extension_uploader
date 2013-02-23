@@ -54,6 +54,10 @@ class Uploader {
 	protected $dataCollector;
 
 	/**
+	 * @var \T3x\ExtensionUploader\Upload\EmconfAccess
+	 */
+	protected $emconfAccess;
+	/**
 	 * @param \T3x\ExtensionUploader\Utility\StatesUtility $statesUtility
 	 */
 	public function injectStatesUtility(\T3x\ExtensionUploader\Utility\StatesUtility $statesUtility) {
@@ -72,6 +76,13 @@ class Uploader {
 	 */
 	public function injectDataCollector(\T3x\ExtensionUploader\Upload\ExtensionDataCollector $dataCollector) {
 		$this->dataCollector = $dataCollector;
+	}
+
+	/**
+	 * @param \T3x\ExtensionUploader\Upload\EmconfAccess $emconfAccess
+	 */
+	public function injectEmconfAccess(\T3x\ExtensionUploader\Upload\EmconfAccess $emconfAccess) {
+		$this->emconfAccess = $emconfAccess;
 	}
 
 	/**
@@ -188,5 +199,9 @@ class Uploader {
 			'extensionData' => $this->dataCollector->getDataForExtension($this->extension, $this->settings),
 			'filesData'     => $this->objects->getFilesCollector()->collectFilesOfExtension($this->extension->getExtensionKey())
 		));
+		$this->emconfAccess->updateEmconfVersion(
+			$this->extension->getExtensionKey(),
+			$this->settings['version']
+		);
 	}
 }

@@ -195,6 +195,12 @@
 			<trans-unit id="exception.1361548543">
 				<source>Category is not valid. Must be one of 'be', 'module', 'fe', 'plugin', 'misc', 'services', 'templates', 'doc' or 'example'</source>
 			</trans-unit>
+			<trans-unit id="exception.1361628063">
+				<source>The ext_emconf.php file of the extension is missing, empty or not valid.</source>
+			</trans-unit>
+			<trans-unit id="exception.1361628410">
+				<source>Extension was uploaded, but the version number cannot be written to the ext_emconf.php file of this extension.</source>
+			</trans-unit>
 		</body>
 	</file>
 </xliff>
