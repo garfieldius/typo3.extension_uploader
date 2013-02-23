@@ -28,7 +28,7 @@ Set release information
 
 In the settings form you can set several settings. The default settings are alright, only the fields for **Username** and **Password** are mandatory since this credentials are needed to authenticate at the TER.
 
-Once you set everything, click the **Upload to TER** button to peform the upload
+Once you set everything, click the **Upload to TER** button to perform the upload
 
 The settings in detail:
 
@@ -99,10 +99,28 @@ The settings in detail:
 .. container:: table-row
 
 	Field
+		Target Repository
+
+	Description
+		The repository to upload to. By default, only one (typo3.org) is available
+
+	Options
+		Repository domain models of the Extension Manager
+
+	Mandatory
+		Yes - but set by default
+
+	Default
+		typo3.org
+
+.. ..................................
+.. container:: table-row
+
+	Field
 		Username / Password
 
 	Description
-		Your username and password for typo3.org. You must have registered the extension key with this account for uploading it.
+		Your username and password for the selected TER, by default typo3.org. You must have registered the extension key with this account for uploading it.
 
 	Options
 		Text
