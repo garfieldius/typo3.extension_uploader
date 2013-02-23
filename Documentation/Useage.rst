@@ -6,8 +6,13 @@ How to upload an extension into the TER
 
 Target group: **Developers**
 
+=============================
+Upload via the Backend Module
+=============================
+
+
 Select an extension
-===================
+-------------------
 
 Go into the module **Extension Builder** which is found inside the **Admin Tools** section.
 
@@ -19,7 +24,7 @@ There click the upload icon on the left in the row that displays the extension y
 		Click upload on the left of the extension to upload
 
 Set release information
-=======================
+-----------------------
 
 In the settings form you can set several settings. The default settings are alright, only the fields for **Username** and **Password** are mandatory since this credentials are needed to authenticate at the TER.
 
@@ -113,3 +118,41 @@ The settings in detail:
 		:alt: Extensions list
 
 		Set username and password and hit *Upload* to release your extension
+
+
+==============
+Upload via CLI
+==============
+
+As an alternative, an extbase command is available via a shell that supports TYPO3's command line API. It is well documented and can be used easily.
+
+There are four mandatory commands
+
+* --release OR --version
+* extensionkey
+* TYPO3.org username
+* TYPO3.org password
+
+.. note::
+	Unlike the Backend module, the CLI (currently) only supports uploads to the typo3.org repository.
+
+To display the help just type
+
+.. code-block:: none
+
+	./typo3/cli_dispatch.phpsh extbase help uploader:upload
+
+As mentioned above, the release ('bugfix', 'minor', 'major') or the version must be set.
+So those two are both valid commands:
+
+Release a minor version:
+
+.. code-block:: none
+
+	./typo3/cli_dispatch.phpsh extbase uploader:upload --release=minor --comment="New features" my_extension my_user my_password
+
+Release a specific version:
+
+.. code-block:: none
+
+	./typo3/cli_dispatch.phpsh extbase uploader:upload --version=1.2.3 --comment="Skip some versions" my_extension my_user my_password
