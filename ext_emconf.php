@@ -1,6 +1,16 @@
 <?php
 
-$EM_CONF[$_EXTKEY] = array(
+/***************************************************************
+ * Extension Manager/Repository config file for ext "extension_uploader".
+ *
+ * Auto generated 23-02-2013 18:05
+ *
+ * Manual updates:
+ * Only the data in the array - everything else is removed by next
+ * writing. "version" and "dependencies" must not be touched!
+ ***************************************************************/
+
+$EM_CONF[$_EXTKEY] = array (
 	'title' => 'Extension Uploader',
 	'description' => 'Upload your extensions into the TER',
 	'category' => 'module',
@@ -18,19 +28,27 @@ $EM_CONF[$_EXTKEY] = array(
 	'modify_tables' => '',
 	'clearCacheOnLoad' => 0,
 	'lockType' => '',
-	'version' => '1.0.3',
-	'constraints' => array(
-		'depends' => array(
+	'version' => '1.0.4',
+	'constraints' => 
+	array (
+		'depends' => 
+		array (
 			'extbase' => '6.0-6.9.99',
 			'fluid' => '6.0-6.9.99',
 			'typo3' => '6.0-6.9.99',
 			'extensionmanager' => '6.0.0-6.9.99',
 		),
-		'conflicts' => array(
+		'conflicts' => 
+		array (
 		),
-		'suggests' => array(
+		'suggests' => 
+		array (
 		),
 	),
+	'suggests' => 
+	array (
+	),
+	'conflicts' => '',
 );
 
 ?>
