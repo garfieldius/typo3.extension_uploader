@@ -120,7 +120,7 @@ class Uploader {
 	public function validate() {
 
 		// Validate set state
-		if (empty($this->settings['state'])) {
+		if (!isset($this->settings['state'])) {
 			throw new ValidationFailedException('No state given', 1360445248);
 		}
 

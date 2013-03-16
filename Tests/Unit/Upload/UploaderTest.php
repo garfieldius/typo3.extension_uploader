@@ -211,6 +211,18 @@ class UploaderTest extends BaseTestCase {
 		$this->uploader->validate();
 	}
 
+
+	public function testValidateAcceptsZeroStateAsAlpha() {
+		$this->uploader->setSettings(array(
+			'state' => 0,
+			'version' => '3.2.1',
+			'release' => 'minor',
+			'username' => 'my_own_user',
+			'password' => 'verySecurePassword'
+		));
+		$this->uploader->validate();
+	}
+
 	public function testUpload() {
 		$extension = $this->uploader->_get('extension');
 		$extension->_setClone(TRUE);
