@@ -9,7 +9,11 @@
  *                                                                     */
 
 namespace T3x\ExtensionUploader\Domain\Repository;
+use T3x\ExtensionUploader\UploaderException;
+use TYPO3\CMS\Core\Messaging\FlashMessage;
+use TYPO3\CMS\Core\Messaging\FlashMessageQueue;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 use TYPO3\CMS\Extensionmanager\Domain\Repository\ExtensionRepository;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
@@ -34,6 +38,19 @@ class LocalExtensionRepository extends ExtensionRepository {
 	protected $statesUtility;
 
 	/**
+	 * @var boolean
+	 */
+	protected $silenceExceptions = FALSE;
+
+	/**
+	 * The flash messages. Use $this->flashMessageContainer->add(...) to add a new Flash message.
+	 *
+	 * @var \TYPO3\CMS\Extbase\Mvc\Controller\FlashMessageContainer
+	 * @api
+	 */
+	protected $flashMessageContainer;
+
+	/**
 	 * @param \TYPO3\CMS\Extensionmanager\Utility\ListUtility $listUtility
 	 */
 	public function injectListUtility(\TYPO3\CMS\Extensionmanager\Utility\ListUtility $listUtility) {
@@ -45,6 +62,25 @@ class LocalExtensionRepository extends ExtensionRepository {
 	 */
 	public function injectStatesUtility(\T3x\ExtensionUploader\Utility\StatesUtility $statesUtility) {
 		$this->statesUtility = $statesUtility;
+	}
+
+	/**
+	 * Injects the flash messages container
+	 *
+	 * @param \TYPO3\CMS\Extbase\Mvc\Controller\FlashMessageContainer $flashMessageContainer
+	 * @return void
+	 */
+	public function injectFlashMessageContainer(\TYPO3\CMS\Extbase\Mvc\Controller\FlashMessageContainer $flashMessageContainer) {
+		$this->flashMessageContainer = $flashMessageContainer;
+	}
+
+	/**
+	 * @param boolean $silent
+	 * @return LocalExtensionRepository
+	 */
+	public function setSilenceExceptions($silent) {
+		$this->silenceExceptions = (boolean) $silent;
+		return $this;
 	}
 
 	/**
@@ -70,77 +106,86 @@ class LocalExtensionRepository extends ExtensionRepository {
 			if (strpos($extensionConfig['siteRelPath'], $relPath) === FALSE) {
 				continue;
 			}
+			try {
+				/* @var $extension \T3x\ExtensionUploader\Domain\Model\LocalExtension */
+				if (isset($extensionConfig['terObject']) && $extensionConfig['terObject'] instanceof \TYPO3\CMS\Extensionmanager\Domain\Model\Extension) {
+					$extension = $this->findOneByExtensionKeyAndVersion($extKey, $extensionConfig['terObject']->getVersion());
+					$extension->setKnownToTer(TRUE);
+				} else {
+					$extension = GeneralUtility::makeInstance('T3x\ExtensionUploader\Domain\Model\LocalExtension');
+					$extension->setExtensionKey($extKey);
+					$extension->setKnownToTer(FALSE);
+				}
 
-			/* @var $extension \T3x\ExtensionUploader\Domain\Model\LocalExtension */
-			if (isset($extensionConfig['terObject']) && $extensionConfig['terObject'] instanceof \TYPO3\CMS\Extensionmanager\Domain\Model\Extension) {
-				$extension = $this->findOneByExtensionKeyAndVersion($extKey, $extensionConfig['terObject']->getVersion());
-				$extension->setKnownToTer(TRUE);
-			} else {
-				$extension = GeneralUtility::makeInstance('T3x\ExtensionUploader\Domain\Model\LocalExtension');
-				$extension->setExtensionKey($extKey);
-				$extension->setKnownToTer(FALSE);
-			}
+				$extension->setVersion($extensionConfig['version']);
+				$extension->setTitle($extensionConfig['title']);
+				$extension->setDescription($extensionConfig['description']);
+				$extension->setLoaded(ExtensionManagementUtility::isLoaded($extKey));
+				$extension->setSiteRelPath($extensionConfig['siteRelPath']);
+				$extension->setState($this->statesUtility->getStateIdForKey($extensionConfig['state']));
 
-			$extension->setVersion($extensionConfig['version']);
-			$extension->setTitle($extensionConfig['title']);
-			$extension->setDescription($extensionConfig['description']);
-			$extension->setLoaded(ExtensionManagementUtility::isLoaded($extKey));
-			$extension->setSiteRelPath($extensionConfig['siteRelPath']);
-			$extension->setState($this->statesUtility->getStateIdForKey($extensionConfig['state']));
+				if (!empty($extensionConfig['constraints']) && is_array($extensionConfig['constraints'])) {
+					$extension->setSerializedDependencies(serialize($extensionConfig['constraints']));
+				} else {
+					$extension->setSerializedDependencies($forcedDefaultDependencies);
+				}
 
-			if (!empty($extensionConfig['constraints']) && is_array($extensionConfig['constraints'])) {
-				$extension->setSerializedDependencies(serialize($extensionConfig['constraints']));
-			} else {
-				$extension->setSerializedDependencies($forcedDefaultDependencies);
-			}
+				if (!empty($extensionConfig['category'])) {
+					$extension->setCategoryByKey($extensionConfig['category']);
+				}
+				if (!empty($extensionConfig['author'])) {
+					$extension->setAuthorName($extensionConfig['author']);
+				}
+				if (!empty($extensionConfig['author_email'])) {
+					$extension->setAuthorEmail($extensionConfig['author_email']);
+				}
+				if (!empty($extensionConfig['author_company'])) {
+					$extension->setAuthorCompany($extensionConfig['author_company']);
+				}
+				if (!empty($extensionConfig['CGLcompliance'])) {
+					$extension->setCglCompliance($extensionConfig['CGLcompliance']);
+				}
+				if (!empty($extensionConfig['CGLcompliance_note'])) {
+					$extension->setCglComplianceNote($extensionConfig['CGLcompliance_note']);
+				}
+				if (!empty($extensionConfig['uploadfolder'])) {
+					$extension->setUploadFolder(TRUE);
+				}
+				if (!empty($extensionConfig['shy'])) {
+					$extension->setShy(TRUE);
+				}
+				if (!empty($extensionConfig['clearCacheOnLoad'])) {
+					$extension->setClearCachesOnLoad(TRUE);
+				}
+				if (!empty($extensionConfig['createDirs'])) {
+					$extension->setCreateDirectories($extensionConfig['createDirs']);
+				}
+				if (!empty($extensionConfig['module'])) {
+					$extension->setModule($extensionConfig['module']);
+				}
+				if (!empty($extensionConfig['modify_tables'])) {
+					$extension->setModifiedTables($extensionConfig['modify_tables']);
+				}
+				if (!empty($extensionConfig['priority'])) {
+					$extension->setPriority($extensionConfig['priority']);
+				}
+				if (!empty($extensionConfig['lockType'])) {
+					$extension->setLockType($extensionConfig['lockType']);
+				}
+				if (!empty($extensionConfig['docPath'])) {
+					$extension->setDocumentationPath($extensionConfig['docPath']);
+				}
 
-			if (!empty($extensionConfig['category'])) {
-				$extension->setCategoryByKey($extensionConfig['category']);
-			}
-			if (!empty($extensionConfig['author'])) {
-				$extension->setAuthorName($extensionConfig['author']);
-			}
-			if (!empty($extensionConfig['author_email'])) {
-				$extension->setAuthorEmail($extensionConfig['author_email']);
-			}
-			if (!empty($extensionConfig['author_company'])) {
-				$extension->setAuthorCompany($extensionConfig['author_company']);
-			}
-			if (!empty($extensionConfig['CGLcompliance'])) {
-				$extension->setCglCompliance($extensionConfig['CGLcompliance']);
-			}
-			if (!empty($extensionConfig['CGLcompliance_note'])) {
-				$extension->setCglComplianceNote($extensionConfig['CGLcompliance_note']);
-			}
-			if (!empty($extensionConfig['uploadfolder'])) {
-				$extension->setUploadFolder(TRUE);
-			}
-			if (!empty($extensionConfig['shy'])) {
-				$extension->setShy(TRUE);
-			}
-			if (!empty($extensionConfig['clearCacheOnLoad'])) {
-				$extension->setClearCachesOnLoad(TRUE);
-			}
-			if (!empty($extensionConfig['createDirs'])) {
-				$extension->setCreateDirectories($extensionConfig['createDirs']);
-			}
-			if (!empty($extensionConfig['module'])) {
-				$extension->setModule($extensionConfig['module']);
-			}
-			if (!empty($extensionConfig['modify_tables'])) {
-				$extension->setModifiedTables($extensionConfig['modify_tables']);
-			}
-			if (!empty($extensionConfig['priority'])) {
-				$extension->setPriority($extensionConfig['priority']);
-			}
-			if (!empty($extensionConfig['lockType'])) {
-				$extension->setLockType($extensionConfig['lockType']);
-			}
-			if (!empty($extensionConfig['docPath'])) {
-				$extension->setDocumentationPath($extensionConfig['docPath']);
-			}
+				$extensions[$extKey] = $extension;
 
-			$extensions[$extKey] = $extension;
+			} catch (UploaderException $exception) {
+				if ($this->silenceExceptions === TRUE) {
+					$message = LocalizationUtility::translate('error.' . $exception->getCode(), 'extension_uploader', array($extKey, $exception->getMessage())) ?: $exception->getMessage();
+					$this->flashMessageContainer->add($message, '', FlashMessage::ERROR);
+				} else {
+					throw $exception;
+				}
+			}
 		}
 
 		ksort($extensions);

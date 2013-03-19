@@ -206,4 +206,12 @@ class Uploader {
 			$this->settings['version']
 		);
 	}
+
+	public function getReleasedVersion() {
+		if (isset($this->settings['version'])) {
+			return $this->settings['version'];
+		} else {
+			return '';
+		}
+	}
 }

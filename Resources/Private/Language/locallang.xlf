@@ -193,7 +193,7 @@
 				<source>State is not valid. Must be one of 'alpha', 'beta', 'stable', 'experimental', 'test' or 'obsolete'</source>
 			</trans-unit>
 			<trans-unit id="exception.1361548543">
-				<source>Category is not valid. Must be one of 'be', 'module', 'fe', 'plugin', 'misc', 'services', 'templates', 'doc' or 'example'</source>
+				<source>Category of extension '%1$s' is not valid. Must be one of 'be', 'module', 'fe', 'plugin', 'misc', 'services', 'templates', 'doc' or 'example'</source>
 			</trans-unit>
 			<trans-unit id="exception.1361628063">
 				<source>The ext_emconf.php file of the extension is missing, empty or not valid.</source>

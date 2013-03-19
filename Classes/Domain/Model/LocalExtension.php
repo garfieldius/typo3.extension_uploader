@@ -145,7 +145,7 @@ class LocalExtension extends Extension {
 				return $this;
 			}
 		}
-		throw new UploaderException('Invalid category key ' . $categoryKey, 1361548543);
+		throw new UploaderException("Invalid category key '$categoryKey' in extension '{$this->getExtensionKey()}', must be one of: " . implode(', ', self::$defaultCategories), 1361548543);
 	}
 
 	/**

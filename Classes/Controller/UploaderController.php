@@ -76,7 +76,7 @@ class UploaderController extends ActionController {
 	}
 
 	public function listAction() {
-		$this->view->assign('extensions', $this->extensions->findAll());
+		$this->view->assign('extensions', $this->extensions->setSilenceExceptions(TRUE)->findAll());
 	}
 
 	/**
@@ -111,7 +111,7 @@ class UploaderController extends ActionController {
 			$this->uploader->validate();
 			$this->uploader->upload();
 
-			$message = LocalizationUtility::translate('upload.success', 'extension_uploader', array($extensionKey, $settings['version']));
+			$message = LocalizationUtility::translate('upload.success', 'extension_uploader', array($extensionKey, $this->uploader->getReleasedVersion()));
 			$this->flashMessageContainer->add($message);
 			$this->redirect('list');
 
