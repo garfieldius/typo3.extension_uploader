@@ -177,12 +177,12 @@ class Uploader {
 		$this->settings['password'] = trim($this->settings['password']);
 
 		// Validate username
-		if (!preg_match('/^[0-9a-z\-_]{3,}$/', $this->settings['username'])) {
+		if (strlen($this->settings['username']) < 3) {
 			throw new ValidationFailedException('Username not valid', 1360446444);
 		}
 
 		// Validate password
-		if (strlen($this->settings['password']) < 8) {
+		if (strlen($this->settings['password']) < 6) {
 			throw new ValidationFailedException('Password is too short', 1360446283);
 		}
 	}
