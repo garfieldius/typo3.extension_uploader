@@ -33,7 +33,7 @@ class ExtensionDataCollector {
 			'metaData'     => array(
 				'title'         => utf8_encode($extension->getTitle()),
 				'description'   => utf8_encode($extension->getDescription()),
-				'category'      => utf8_encode($extension->getCategory()),
+				'category'      => utf8_encode($extension->getCategoryString()),
 				'state'         => utf8_encode($settings['state']),
 				'authorName'    => utf8_encode($extension->getAuthorName()),
 				'authorEmail'   => utf8_encode($extension->getAuthorEmail()),

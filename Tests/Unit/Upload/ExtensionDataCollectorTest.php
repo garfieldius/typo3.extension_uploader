@@ -10,6 +10,8 @@
 
 namespace T3x\ExtensionUploader\Tests\Unit\Upload;
 use TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase;
+use T3x\ExtensionUploader\Domain\Model\LocalExtension;
+use T3x\ExtensionUploader\Upload\ExtensionDataCollector;
 
 /**
  * Test the data collector
@@ -22,8 +24,8 @@ use TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase;
 class ExtensionDataCollectorTest extends BaseTestCase {
 
 	public function testGetDataForExtension() {
-		$collector = new \T3x\ExtensionUploader\Upload\ExtensionDataCollector();
-		$extension = new \T3x\ExtensionUploader\Domain\Model\LocalExtension();
+		$collector = new ExtensionDataCollector();
+		$extension = new LocalExtension();
 		$settings = array(
 			'version' => '1.2.3',
 			'uploadComment' => 'Load me',
@@ -52,16 +54,16 @@ class ExtensionDataCollectorTest extends BaseTestCase {
 		$extension->setClearCachesOnLoad(TRUE);
 
 		$expected = array(
-			'extensionKey' => utf8_encode($extension->getExtensionKey()),
-			'version'      => utf8_encode($settings['version']),
+			'extensionKey' => 'dummy_extension',
+			'version'      => '1.2.3',
 			'metaData'     => array(
-				'title'          => utf8_encode($extension->getTitle()),
-				'description'   => utf8_encode($extension->getDescription()),
-				'category'       => utf8_encode($extension->getCategory()),
-				'state'          => utf8_encode($settings['state']),
-				'authorName'    => utf8_encode($extension->getAuthorName()),
-				'authorEmail'   => utf8_encode($extension->getAuthorEmail()),
-				'authorCompany' => utf8_encode($extension->getAuthorCompany())
+				'title'         => 'Dummy Extension',
+				'description'   => 'Does nothing',
+				'category'      => 'fe',
+				'state'         => 'alpha',
+				'authorName'    => 'John Doe',
+				'authorEmail'   => 'john.doe@example.tld',
+				'authorCompany' => 'Example Inc.'
 			),
 			'technicalData' => array(
 				'dependencies'     => array(
@@ -81,24 +83,24 @@ class ExtensionDataCollectorTest extends BaseTestCase {
 						'versionRange' => '0.0.1-9.99.999'
 					)
 				),
-				'loadOrder'        => utf8_encode($extension->getLoadOrder()),
-				'uploadFolder'     => $extension->getUploadFolder(),
-				'createDirs'       => utf8_encode($extension->getCreateDirectories()),
-				'shy'              => $extension->getShy(),
-				'modules'          => utf8_encode($extension->getModule()),
-				'modifyTables'     => utf8_encode($extension->getModifiedTables()),
-				'priority'         => utf8_encode($extension->getPriority()),
-				'clearCacheOnLoad' => $extension->getClearCachesOnLoad(),
-				'lockType'         => utf8_encode($extension->getLockType()),
-				'docPath'          => utf8_encode($extension->getDocumentationPath()),
+				'loadOrder'        => 'top',
+				'uploadFolder'     => FALSE,
+				'createDirs'       => '',
+				'shy'              => FALSE,
+				'modules'          => 'mod1',
+				'modifyTables'     => '',
+				'priority'         => '',
+				'clearCacheOnLoad' => TRUE,
+				'lockType'         => '',
+				'docPath'          => '',
 				'doNotLoadInFE'    => FALSE
 			),
 			'infoData' => array(
 				'codeLines'                       => 0,
 				'codeBytes'                       => 0,
-				'codingGuidelinesCompliance'      => utf8_encode($extension->getCglCompliance()),
-				'codingGuidelinesComplianceNotes' => utf8_encode($extension->getCglComplianceNote()),
-				'uploadComment'                   => utf8_encode($settings['uploadComment']),
+				'codingGuidelinesCompliance'      => '',
+				'codingGuidelinesComplianceNotes' => '',
+				'uploadComment'                   => $settings['uploadComment'],
 				'techInfo'                        => array()
 			)
 		);
