@@ -13,7 +13,7 @@ namespace T3x\ExtensionUploader\Upload;
 /**
  * A soap connection with the TER
  *
- * @package ExtensionBuilder
+ * @package ExtensionUploaderex
  * @author Georg Großberger <contact@grossberger-ge.org>
  * @copyright 2013 by Georg Großberger
  * @license GPL v3 http://www.gnu.org/licenses/gpl-3.0.txt

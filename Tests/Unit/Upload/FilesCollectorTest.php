@@ -15,7 +15,7 @@ use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 /**
  * Test for the files collector
  *
- * @package ExtensionBuilder
+ * @package ExtensionUploader
  * @author Georg Großberger <contact@grossberger-ge.org>
  * @copyright 2013 by Georg Großberger
  * @license GPL v3 http://www.gnu.org/licenses/gpl-3.0.txt

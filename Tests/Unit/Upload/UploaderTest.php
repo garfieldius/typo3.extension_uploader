@@ -14,7 +14,7 @@ use TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase;
 /**
  * Test for the uploader
  *
- * @package ExtensionBuilder
+ * @package ExtensionUploader
  * @author Georg Großberger <contact@grossberger-ge.org>
  * @copyright 2013 by Georg Großberger
  * @license GPL v3 http://www.gnu.org/licenses/gpl-3.0.txt
