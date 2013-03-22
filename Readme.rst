@@ -5,6 +5,10 @@ Extension Uploader extension for TYPO3 CMS
 
 The Extension Uploader does what the name says: you can use it to release your extension to the TER. With the new extension manager in TYPO3 6.0 this is not possible anymore because it has been stripped down to it's essential features. While some function might have been superfluoues anyway, others being moved into other tools, this particular function is missing now.
 
+A Git repository can be found on `Github`_.
+
+.. _Github: https://github.com/Trenker/typo3.extension_uploader
+
 -----------------
 What this is NOT:
 -----------------
