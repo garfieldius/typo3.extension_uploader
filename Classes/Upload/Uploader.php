@@ -24,6 +24,11 @@ use TYPO3\CMS\Extensionmanager\Domain\Model\Repository;
 class Uploader {
 
 	/**
+	 * @var \TYPO3\CMS\Extbase\SignalSlot\Dispatcher
+	 */
+	protected $signals;
+
+	/**
 	 * @var \T3x\ExtensionUploader\Utility\StatesUtility
 	 */
 	protected $statesUtility;
@@ -57,6 +62,14 @@ class Uploader {
 	 * @var \T3x\ExtensionUploader\Upload\EmconfAccess
 	 */
 	protected $emconfAccess;
+
+	/**
+	 * @param \TYPO3\CMS\Extbase\SignalSlot\Dispatcher $signals
+	 */
+	protected function injectSignals(\TYPO3\CMS\Extbase\SignalSlot\Dispatcher $signals) {
+		$this->signals = $signals;
+	}
+
 	/**
 	 * @param \T3x\ExtensionUploader\Utility\StatesUtility $statesUtility
 	 */
@@ -118,6 +131,14 @@ class Uploader {
 	 * @throws ValidationFailedException
 	 */
 	public function validate() {
+
+		$argumentSettings = $this->settings;
+		unset($argumentSettings['password']);
+		$this->signals->dispatch(
+			'T3x\ExtensionUploader\Upload\Uploader',
+			'preValidate',
+			array($this->extension, $argumentSettings)
+		);
 
 		// Validate set state
 		if (!isset($this->settings['state'])) {
@@ -185,9 +206,27 @@ class Uploader {
 		if (strlen($this->settings['password']) < 6) {
 			throw new ValidationFailedException('Password is too short', 1360446283);
 		}
+
+		$argumentSettings = $this->settings;
+		unset($argumentSettings['password']);
+		$this->signals->dispatch(
+			'T3x\ExtensionUploader\Upload\Uploader',
+			'postValidate',
+			array($this->extension, $argumentSettings)
+		);
 	}
 
 	public function upload() {
+
+		$argumentSettings = $this->settings;
+		unset($argumentSettings['password']);
+
+		$this->signals->dispatch(
+			'T3x\ExtensionUploader\Upload\Uploader',
+			'preUpload',
+			array($this->extension, $argumentSettings)
+		);
+
 		$connection = $this->objects->getSoapConnectionForRepository(
 			$this->repository,
 			$this->settings['username'],
@@ -204,6 +243,12 @@ class Uploader {
 		$this->emconfAccess->updateEmconfVersion(
 			$this->extension->getExtensionKey(),
 			$this->settings['version']
+		);
+
+		$this->signals->dispatch(
+			'T3x\ExtensionUploader\Upload\Uploader',
+			'postUpload',
+			array($this->extension, $argumentSettings)
 		);
 	}
 
