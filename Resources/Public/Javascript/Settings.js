@@ -73,12 +73,12 @@ jQuery(function($) {
 			$(".error-release").show();
 		}
 
-		if (!/^[0-9a-z\-_]{3,}$/.test(form.find('#username').val())) {
+		if (!/[0-9a-z]+/i.test(form.find('#username').val())) {
 			error = true;
 			$(".error-username").show();
 		}
 
-		if ($.trim("" + form.find('#password').val()).length < 8) {
+		if ($.trim("" + form.find('#password').val()).length < 5) {
 			error = true;
 			$(".error-password").show();
 		}
