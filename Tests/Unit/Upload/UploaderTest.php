@@ -299,6 +299,27 @@ class UploaderTest extends BaseTestCase {
 			'filesData'     => $fileData
 		);
 
+		$signalSettingsArgument = $settings;
+		unset($signalSettingsArgument['password']);
+
+		$this->signalSlots
+			 ->expects($this->at(0))
+			 ->method('dispatch')
+			 ->with(
+				'T3x\ExtensionUploader\Upload\Uploader',
+				'preUpload',
+				array($extension, $signalSettingsArgument)
+			 );
+
+		$this->signalSlots
+			 ->expects($this->at(1))
+			 ->method('dispatch')
+			 ->with(
+				'T3x\ExtensionUploader\Upload\Uploader',
+				'postUpload',
+				array($extension, $signalSettingsArgument)
+			 );
+
 		$dataCollector = $this->getMock('T3x\ExtensionUploader\Upload\ExtensionDataCollector');
 		$dataCollector
 			->expects($this->once())
