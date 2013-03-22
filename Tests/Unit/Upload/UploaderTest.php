@@ -9,6 +9,7 @@
  *                                                                     */
 
 namespace T3x\ExtensionUploader\Tests\Unit\Upload;
+use T3x\ExtensionUploader\Domain\Model\LocalExtension;
 use TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase;
 
 /**
@@ -26,19 +27,64 @@ class UploaderTest extends BaseTestCase {
 	 */
 	protected $uploader;
 
+	/**
+	 * @var \PHPUnit_Framework_MockObject_MockObject
+	 */
+	protected $signalSlots;
+
+	/**
+	 * @var LocalExtension
+	 */
+	protected $extension;
+
 	protected function setUp() {
-		$extension = new \T3x\ExtensionUploader\Domain\Model\LocalExtension();
+		$extension = new LocalExtension();
 		$extension->setExtensionKey('some_dummy');
 		$extension->setTitle('Some Dummy');
 		$extension->setSiteRelPath('typo3conf/ext/some_dummy/');
 		$extension->setVersion('3.2.1');
 		$extension->_setClone(FALSE);
+		$this->extension = $extension;
 
-		$this->uploader = $this->objectManager->create($this->buildAccessibleProxy('T3x\ExtensionUploader\Upload\Uploader'));
+		$signalSlot = $this->getMock('TYPO3\CMS\Extbase\SignalSlot\Dispatcher');
+		$this->signalSlots = $signalSlot;
+
+		$this->uploader = $this->objectManager->get($this->buildAccessibleProxy('T3x\ExtensionUploader\Upload\Uploader'));
 		$this->uploader->setExtension($extension);
+		$this->uploader->injectSignals($signalSlot);
 	}
 
 	public function testValidateDoesNothingIfDataIsOk() {
+		$settings = array(
+			'state' => 1,
+			'version' => '3.2.1',
+			'release' => 'minor',
+			'username' => 'my_own_user',
+			'password' => 'verySecurePassword'
+		);
+		$preSettings = $settings;
+		unset($preSettings['password']);
+		$postSettings = $preSettings;
+		$postSettings['version'] = '3.3.0';
+
+		$this->signalSlots
+			 ->expects($this->at(0))
+			 ->method('dispatch')
+			 ->with(
+				'T3x\ExtensionUploader\Upload\Uploader',
+				'preValidate',
+				array($this->extension, $preSettings)
+			);
+
+		$this->signalSlots
+			 ->expects($this->at(1))
+			 ->method('dispatch')
+			 ->with(
+				'T3x\ExtensionUploader\Upload\Uploader',
+				'postValidate',
+				array($this->extension, $postSettings)
+			);
+
 		$this->uploader->setSettings(array(
 			'state' => 1,
 			'version' => '3.2.1',

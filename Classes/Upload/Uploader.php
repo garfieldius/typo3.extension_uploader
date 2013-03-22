@@ -66,7 +66,7 @@ class Uploader {
 	/**
 	 * @param \TYPO3\CMS\Extbase\SignalSlot\Dispatcher $signals
 	 */
-	protected function injectSignals(\TYPO3\CMS\Extbase\SignalSlot\Dispatcher $signals) {
+	public function injectSignals(\TYPO3\CMS\Extbase\SignalSlot\Dispatcher $signals) {
 		$this->signals = $signals;
 	}
 
