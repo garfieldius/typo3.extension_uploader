@@ -76,7 +76,8 @@ class UploaderController extends ActionController {
 	}
 
 	public function listAction() {
-		$this->view->assign('extensions', $this->extensions->setSilenceExceptions(TRUE)->findAll());
+		$this->extensions->setSilenceExceptions(TRUE);
+		$this->view->assign('extensions', $this->extensions->findAll());
 	}
 
 	/**

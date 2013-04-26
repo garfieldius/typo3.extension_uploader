@@ -237,7 +237,7 @@ class UploaderTest extends BaseTestCase {
 			'state' => 1,
 			'version' => '3.2.1',
 			'release' => 'major',
-			'username' => 'My\User',
+			'username' => 'O',
 			'password' => 'verySecurePassword'
 		));
 		$this->uploader->validate();

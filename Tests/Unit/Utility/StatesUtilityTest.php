@@ -56,6 +56,15 @@ class StatesUtilityTest extends BaseTestCase {
 		$this->assertEquals(5, $this->util->getStateIdForKey('obsolete'));
 	}
 
+	public function testGetStateIdForKeyIgnoresUppercaseCharacters() {
+		$this->assertEquals(0, $this->util->getStateIdForKey('Alpha'));
+		$this->assertEquals(1, $this->util->getStateIdForKey('Beta'));
+		$this->assertEquals(2, $this->util->getStateIdForKey('Stable'));
+		$this->assertEquals(3, $this->util->getStateIdForKey('eXperimental'));
+		$this->assertEquals(4, $this->util->getStateIdForKey('TesT'));
+		$this->assertEquals(5, $this->util->getStateIdForKey('OBSOLETE'));
+	}
+
 	/**
 	 * @expectedException \T3x\ExtensionUploader\UploaderException
 	 */

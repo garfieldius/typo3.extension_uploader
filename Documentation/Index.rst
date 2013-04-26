@@ -4,7 +4,7 @@ Extension Uploader
 
 :Extension name: Extension Uploader
 :Extension key: extension_uploader
-:Version: 1.0.7
+:Version: 1.0.8
 :Description: manuals covering the TYPO3 CMS extension "Extension Uploader"
 :Language: en
 :Author: Georg Großberger

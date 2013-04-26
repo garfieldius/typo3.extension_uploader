@@ -83,7 +83,11 @@ class UploaderCommandController extends CommandController {
 	 * to '1.3.0' and a bugfix release will be '1.2.4'.
 	 * If a version is given it must be a semver formated version number, like TYPO3
 	 * itself uses.
-	 * A version number as argument, disables the 'release' argument.
+	 * A version number as argument, disables the 'release' argument by forcing the
+	 * release type to "custom"
+	 *
+	 * Setting neither the "release" nor the "version" argument, will trigger a
+	 * "bugfix" release, increasing the bugifx version number by one.
 	 *
 	 * The state must be a string indicating the current stability or nature of the
 	 * extension. If no state is given, the extensions current state
@@ -94,7 +98,7 @@ class UploaderCommandController extends CommandController {
 	 * @param string $password Your password for the TER (typo3.org)
 	 * @param string $state The state of your extension. Must be 'alpha', 'beta', 'stable', 'test', 'experimental' or 'obsolete'
 	 * @param string $release The release type, must be 'bugfix', 'minor' or 'major'. Ignored if version is set
-	 * @param string $version The new version of this release. Must be higher than the last. Will be set automatically if release is set properly
+	 * @param string $version The new version of this release. Must be higher than the last. Will be set automatically if not provided
 	 * @param string $comment The upload comment
 	 * @return void
 	 */
@@ -104,6 +108,8 @@ class UploaderCommandController extends CommandController {
 
 			if (!empty($version)) {
 				$release = 'custom';
+			} elseif (empty($release)) {
+				$release = 'bugfix';
 			}
 
 			if (empty($state)) {
@@ -125,7 +131,11 @@ class UploaderCommandController extends CommandController {
 			$this->uploader->validate();
 			$this->uploader->upload();
 
-			$message = LocalizationUtility::translate('upload.success.cli', 'extension_uploader', array($extkey, $this->uploader->getReleasedVersion()));
+			$message = LocalizationUtility::translate(
+				'upload.success.cli',
+				'extension_uploader',
+				array($extkey, $this->uploader->getReleasedVersion())
+			);
 		} catch (\T3x\ExtensionUploader\UploaderException $e) {
 			$message = LocalizationUtility::translate('exception.' . $e->getCode(), 'extension_uploader');
 		}

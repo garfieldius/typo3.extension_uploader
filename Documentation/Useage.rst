@@ -51,10 +51,10 @@ The settings in detail:
 		* Obsolete - Last release of an extension, indicator that it is not maintained anymore
 
 	Mandatory
-		Yes - but set by default
+		No
 
 	Default
-		The last release state, alpha for new extensions
+		The last release state, alpha if none found in emconf
 
 .. ..................................
 .. container:: table-row
@@ -72,7 +72,7 @@ The settings in detail:
 		* Custom - Just set a custom version number
 
 	Mandatory
-		Yes - but set by default
+		No
 
 	Default
 		Bugfix
@@ -144,9 +144,8 @@ Upload via CLI
 
 As an alternative, an extbase command is available via a shell that supports TYPO3's command line API. It is well documented and can be used easily.
 
-There are four mandatory commands
+There are three mandatory commands
 
-* --release OR --version
 * extensionkey
 * TYPO3.org username
 * TYPO3.org password
@@ -160,8 +159,11 @@ To display the help just type
 
 	./typo3/cli_dispatch.phpsh extbase help uploader:upload
 
-As mentioned above, the release ('bugfix', 'minor', 'major') or the version must be set.
-So those two are both valid commands:
+Quick release of a bugfix version:
+
+.. code-block:: none
+
+	./typo3/cli_dispatch.phpsh extbase uploader:upload my_extension my_user my_password
 
 Release a minor version:
 

@@ -148,8 +148,6 @@ class Uploader {
 		$validStates = $this->statesUtility->getStates();
 		if (!isset($validStates[ $this->settings['state'] ])) {
 			throw new ValidationFailedException('State not supported', 1360445400);
-		} else {
-			$this->settings['state'] = $validStates[$this->settings['state']];
 		}
 
 		if (empty($this->settings['release'])) {

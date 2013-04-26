@@ -43,6 +43,7 @@ class UploaderControllerTest extends BaseTestCase {
 		$view->expects($this->once())->method('assign')->with('extensions', $dummyCollection);
 
 		$repository = $this->getMock('T3x\ExtensionUploader\Domain\Repository\LocalExtensionRepository');
+		$repository->expects($this->once())->method('setSilenceExceptions')->with(TRUE);
 		$repository->expects($this->once())->method('findAll')->will($this->returnValue($dummyCollection));
 
 		$this->controller->injectExtensions($repository);
@@ -122,6 +123,7 @@ class UploaderControllerTest extends BaseTestCase {
 		$uploader->expects($this->once())->method('setRepository')->with($testRepo);
 		$uploader->expects($this->once())->method('validate');
 		$uploader->expects($this->once())->method('upload');
+		$uploader->expects($this->once())->method('getReleasedVersion')->will($this->returnValue('1.2.3'));
 
 		$controller = $this->getMock('T3x\ExtensionUploader\Controller\UploaderController', array('redirect'));
 		$controller->expects($this->once())->method('redirect')->with('list');

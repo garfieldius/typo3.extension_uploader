@@ -64,6 +64,8 @@ class StatesUtility {
 			}
 		}
 
+		$stateKey = strtolower($stateKey);
+
 		if (!isset($this->keyToIndexMap[$stateKey])) {
 			throw new UploaderException('Invalid state key', 1361547441);
 		}
