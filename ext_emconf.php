@@ -3,7 +3,7 @@
 /***************************************************************
  * Extension Manager/Repository config file for ext "extension_uploader".
  *
- * Auto generated 22-03-2013 14:09
+ * Auto generated 26-04-2013 13:46
  *
  * Manual updates:
  * Only the data in the array - everything else is removed by next
@@ -28,7 +28,7 @@ $EM_CONF[$_EXTKEY] = array (
 	'modify_tables' => '',
 	'clearCacheOnLoad' => 1,
 	'lockType' => '',
-	'version' => '1.0.7',
+	'version' => '1.0.8',
 	'constraints' => 
 	array (
 		'depends' => 
