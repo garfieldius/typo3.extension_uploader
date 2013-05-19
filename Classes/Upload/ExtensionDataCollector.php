@@ -33,8 +33,8 @@ class ExtensionDataCollector {
 			'metaData'     => array(
 				'title'         => $extension->getTitle(),
 				'description'   => $extension->getDescription(),
-				'category'      => strtolower($extension->getCategoryString()),
-				'state'         => strtolower($settings['state']),
+				'category'      => $extension->getCategoryString(),
+				'state'         => $extension->getStateKey(),
 				'authorName'    => $extension->getAuthorName(),
 				'authorEmail'   => $extension->getAuthorEmail(),
 				'authorCompany' => $extension->getAuthorCompany()

@@ -10,6 +10,8 @@
 
 namespace T3x\ExtensionUploader\Upload;
 
+use TYPO3\CMS\Core\Utility\GeneralUtility;
+
 /**
  * A soap connection with the TER
  *
@@ -52,8 +54,9 @@ class Connection {
 
 	/**
 	 * Sets Password
+	 *
 	 * @param string $password
-	 * @return Connection
+	 * @return $this
 	 */
 	public function setPassword($password) {
 		$this->password = $password;
@@ -81,6 +84,7 @@ class Connection {
 	}
 
 	/**
+	 * @throws ConnectionException
 	 * @return \SoapClient
 	 */
 	public function connectClient() {
@@ -107,8 +111,12 @@ class Connection {
 		return $client;
 	}
 
-	protected function soapFaultToInternalException(\SoapFault $oldException) {
-		return new ConnectionException($oldException->getMessage(), 1360448742, $oldException);
+	/**
+	 * @param \SoapFault $originalException
+	 * @return ConnectionException
+	 */
+	protected function soapFaultToInternalException(\SoapFault $originalException) {
+		return new ConnectionException($originalException->getMessage(), 1360448742, $originalException);
 	}
 
 	/**
@@ -145,6 +153,8 @@ class Connection {
 			$soapHeader = new \SoapHeader('', $authHeaderName, $authHeader, TRUE);
 			$response   = $this->client->__soapCall($function, $data, NULL, $soapHeader);
 
+			GeneralUtility::devLog('Upload data', 'extension_uploader', 0, array('header' => get_object_vars($soapHeader), 'data' => $data));
+
 			if (
 				property_exists($this->client, 'headersIn') &&
 				isset($this->client->headersIn['HeaderAuthenticate']) &&
@@ -152,6 +162,9 @@ class Connection {
 			) {
 				$this->token = $this->client->headersIn['HeaderAuthenticate']->reactid;
 			}
+
+			GeneralUtility::devLog('Upload response', 'extension_uploader', 0, array('response' => $response));
+
 			return $response;
 		} catch (\SoapFault $exception) {
 			throw $this->soapFaultToInternalException($exception);

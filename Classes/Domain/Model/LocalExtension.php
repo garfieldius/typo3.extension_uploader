@@ -262,7 +262,11 @@ class LocalExtension extends Extension {
 	 * @return string
 	 */
 	public function getStateKey() {
-		return $this->getDefaultState($this->getState());
+		if (isset(self::$defaultStates[ $this->getState() ])) {
+			return self::$defaultStates[ $this->getState() ];
+		} else {
+			return self::$defaultStates[999];
+		}
 	}
 
 	/**

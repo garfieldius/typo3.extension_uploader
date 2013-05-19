@@ -207,6 +207,9 @@ class Uploader {
 			throw new ValidationFailedException('Password is too short', 1360446283);
 		}
 
+		$this->extension->setState($this->settings['state']);
+		$this->extension->setVersion($this->settings['version']);
+
 		$argumentSettings = $this->settings;
 		unset($argumentSettings['password']);
 		$this->signals->dispatch(
