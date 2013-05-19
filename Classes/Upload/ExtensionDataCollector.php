@@ -28,37 +28,37 @@ class ExtensionDataCollector {
 	 */
 	public function getDataForExtension(LocalExtension $extension, array $settings) {
 		return array(
-			'extensionKey' => utf8_encode($extension->getExtensionKey()),
-			'version'      => utf8_encode($settings['version']),
+			'extensionKey' => $extension->getExtensionKey(),
+			'version'      => $settings['version'],
 			'metaData'     => array(
-				'title'         => utf8_encode($extension->getTitle()),
-				'description'   => utf8_encode($extension->getDescription()),
-				'category'      => utf8_encode($extension->getCategoryString()),
-				'state'         => utf8_encode($settings['state']),
-				'authorName'    => utf8_encode($extension->getAuthorName()),
-				'authorEmail'   => utf8_encode($extension->getAuthorEmail()),
-				'authorCompany' => utf8_encode($extension->getAuthorCompany())
+				'title'         => $extension->getTitle(),
+				'description'   => $extension->getDescription(),
+				'category'      => strtolower($extension->getCategoryString()),
+				'state'         => strtolower($settings['state']),
+				'authorName'    => $extension->getAuthorName(),
+				'authorEmail'   => $extension->getAuthorEmail(),
+				'authorCompany' => $extension->getAuthorCompany()
 			),
 			'technicalData' => array(
 				'dependencies'     => $this->getDependenciesArray($extension),
-				'loadOrder'        => utf8_encode($extension->getLoadOrder()),
+				'loadOrder'        => $extension->getLoadOrder(),
 				'uploadFolder'     => $extension->getUploadFolder(),
-				'createDirs'       => utf8_encode($extension->getCreateDirectories()),
+				'createDirs'       => $extension->getCreateDirectories(),
 				'shy'              => $extension->getShy(),
-				'modules'          => utf8_encode($extension->getModule()),
-				'modifyTables'     => utf8_encode($extension->getModifiedTables()),
-				'priority'         => utf8_encode($extension->getPriority()),
+				'modules'          => $extension->getModule(),
+				'modifyTables'     => $extension->getModifiedTables(),
+				'priority'         => $extension->getPriority(),
 				'clearCacheOnLoad' => $extension->getClearCachesOnLoad(),
-				'lockType'         => utf8_encode($extension->getLockType()),
-				'docPath'          => utf8_encode($extension->getDocumentationPath()),
+				'lockType'         => $extension->getLockType(),
+				'docPath'          => $extension->getDocumentationPath(),
 				'doNotLoadInFE'    => FALSE
 			),
 			'infoData' => array(
 				'codeLines'                       => 0,
 				'codeBytes'                       => 0,
-				'codingGuidelinesCompliance'      => utf8_encode($extension->getCglCompliance()),
-				'codingGuidelinesComplianceNotes' => utf8_encode($extension->getCglComplianceNote()),
-				'uploadComment'                   => utf8_encode($settings['uploadComment']),
+				'codingGuidelinesCompliance'      => $extension->getCglCompliance(),
+				'codingGuidelinesComplianceNotes' => $extension->getCglComplianceNote(),
+				'uploadComment'                   => $settings['uploadComment'],
 				'techInfo'                        => array()
 			)
 		);
@@ -76,8 +76,8 @@ class ExtensionDataCollector {
 				if (!empty($dependency) && !empty($extensionKey) && is_string($extensionKey)) {
 					$dependencies[] = array(
 						'kind'         => $dependencyType,
-						'extensionKey' => utf8_encode($extensionKey),
-						'versionRange' => utf8_encode($dependency),
+						'extensionKey' => $extensionKey,
+						'versionRange' => $dependency,
 					);
 				}
 			}

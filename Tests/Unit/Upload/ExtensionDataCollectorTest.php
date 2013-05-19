@@ -29,7 +29,7 @@ class ExtensionDataCollectorTest extends BaseTestCase {
 		$settings = array(
 			'version' => '1.2.3',
 			'uploadComment' => 'Load me',
-			'state' => 'alpha'
+			'state' => 'Alpha'
 		);
 		$extension->setExtensionKey('dummy_extension');
 		$extension->setTitle('Dummy Extension');

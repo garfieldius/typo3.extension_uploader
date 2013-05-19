@@ -145,7 +145,9 @@ class Uploader {
 			throw new ValidationFailedException('No state given', 1360445248);
 		}
 
+		$this->settings['state'] = trim(strtolower($this->settings['state']));
 		$validStates = $this->statesUtility->getStates();
+
 		if (!isset($validStates[ $this->settings['state'] ])) {
 			throw new ValidationFailedException('State not supported', 1360445400);
 		}
