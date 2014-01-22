@@ -32,6 +32,10 @@ class UploaderControllerTest extends BaseTestCase {
 		$this->controller = $this->objectManager->create($this->buildAccessibleProxy('T3x\ExtensionUploader\Controller\UploaderController'));
 	}
 
+	private function getRepositoryMock() {
+		return $this->getMockBuilder('T3x\ExtensionUploader\Domain\Repository\LocalExtensionRepository')->disableOriginalConstructor()->getMock();
+	}
+
 	public function testListAction() {
 
 		$dummyCollection = array(
@@ -42,11 +46,11 @@ class UploaderControllerTest extends BaseTestCase {
 		$view = $this->getMock('TYPO3\CMS\Fluid\View\TemplateView', array('__construct', 'assign'));
 		$view->expects($this->once())->method('assign')->with('extensions', $dummyCollection);
 
-		$repository = $this->getMock('T3x\ExtensionUploader\Domain\Repository\LocalExtensionRepository');
-		$repository->expects($this->once())->method('setSilenceExceptions')->with(TRUE);
+		$repository = $this->getRepositoryMock();
 		$repository->expects($this->once())->method('findAll')->will($this->returnValue($dummyCollection));
+		$repository->expects($this->once())->method('setSilenceExceptions')->will($this->returnValue($repository));
 
-		$this->controller->injectExtensions($repository);
+		$this->controller->_set('extensions', $repository);
 		$this->controller->_set('view', $view);
 
 		$this->controller->listAction();
@@ -68,16 +72,16 @@ class UploaderControllerTest extends BaseTestCase {
 			'state' => 'alpha'
 		);
 		$testRepos = array(
-			new \TYPO3\CMS\Extensionmanager\Domain\Model\Repository()
+			new \TYPO3\CMS\Extensionmanager\Domain\Model\Repository($this->objectManager)
 		);
 
 		$extension = new \T3x\ExtensionUploader\Domain\Model\LocalExtension();
 		$extension->setExtensionKey('extension_uploader');
 
-		$extensionRepository = $this->getMock('T3x\ExtensionUploader\Domain\Repository\LocalExtensionRepository');
+		$extensionRepository = $this->getRepositoryMock();
 		$extensionRepository->expects($this->once())->method('findOneByExtensionKey')->will($this->returnValue($extension));
 
-		$repositories = $this->getMock('TYPO3\CMS\Extensionmanager\Domain\Repository\RepositoryRepository');
+		$repositories = $this->getMockBuilder('TYPO3\CMS\Extensionmanager\Domain\Repository\RepositoryRepository')->disableOriginalConstructor()->getMock();
 		$repositories->expects($this->once())->method('findAll')->will($this->returnValue($testRepos));
 
 		$utility = $this->getMock('T3x\ExtensionUploader\Utility\StatesUtility');
@@ -107,10 +111,10 @@ class UploaderControllerTest extends BaseTestCase {
 			'version' => '1.2.3',
 			'state' => 'alpha'
 		);
-		$testRepo = new \TYPO3\CMS\Extensionmanager\Domain\Model\Repository();
+		$testRepo = new \TYPO3\CMS\Extensionmanager\Domain\Model\Repository($this->objectManager);
 		$testRepo->_setClone(TRUE);
 
-		$repository = $this->getMock('T3x\ExtensionUploader\Domain\Repository\LocalExtensionRepository');
+		$repository = $this->getRepositoryMock();
 		$repository->expects($this->once())->method('findOneByExtensionKey')->with('extension_uploader')->will($this->returnValue($extension));
 
 		$message = LocalizationUtility::translate('upload.success', 'extension_uploader', array('extension_uploader', '1.2.3'));
@@ -123,7 +127,6 @@ class UploaderControllerTest extends BaseTestCase {
 		$uploader->expects($this->once())->method('setRepository')->with($testRepo);
 		$uploader->expects($this->once())->method('validate');
 		$uploader->expects($this->once())->method('upload');
-		$uploader->expects($this->once())->method('getReleasedVersion')->will($this->returnValue('1.2.3'));
 
 		$controller = $this->getMock('T3x\ExtensionUploader\Controller\UploaderController', array('redirect'));
 		$controller->expects($this->once())->method('redirect')->with('list');
@@ -145,7 +148,7 @@ class UploaderControllerTest extends BaseTestCase {
 			'version' => '1.2.3',
 			'state' => 'alpha'
 		);
-		$testRepo = new \TYPO3\CMS\Extensionmanager\Domain\Model\Repository();
+		$testRepo = new \TYPO3\CMS\Extensionmanager\Domain\Model\Repository($this->objectManager);
 		$testRepo->_setClone(TRUE);
 
 		$uploader = $this->getMock('T3x\ExtensionUploader\Upload\Uploader');
@@ -154,7 +157,7 @@ class UploaderControllerTest extends BaseTestCase {
 		$uploader->expects($this->once())->method('setRepository')->with($testRepo);
 		$uploader->expects($this->once())->method('validate')->will($this->throwException($exception));
 
-		$repository = $this->getMock('T3x\ExtensionUploader\Domain\Repository\LocalExtensionRepository');
+		$repository = $this->getRepositoryMock();
 		$repository->expects($this->once())->method('findOneByExtensionKey')->with('extension_uploader')->will($this->returnValue($extension));
 
 		$controller = $this->getMock('T3x\ExtensionUploader\Controller\UploaderController', array('redirect'));

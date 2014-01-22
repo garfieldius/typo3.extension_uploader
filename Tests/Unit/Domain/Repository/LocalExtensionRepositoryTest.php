@@ -68,7 +68,7 @@ class LocalExtensionRepositoryTest extends BaseTestCase {
 		$expected = array(
 			'extension_uploader' => $expectedExtension
 		);
-		$repository = $this->getMock(get_class($this->repository), array('findOneByExtensionKeyAndVersion'));
+		$repository = $this->getMockBuilder(get_class($this->repository))->disableOriginalConstructor()->setMethods(array('findOneByExtensionKeyAndVersion'))->getMock();
 		$repository->injectListUtility($listUtility);
 		$repository->injectStatesUtility($statesUtility);
 		$repository->expects($this->once())->method('findOneByExtensionKeyAndVersion')->with($fetchedExtension->getExtensionKey(), $fetchedExtension->getVersion())->will($this->returnValue($expectedExtension));
@@ -183,7 +183,7 @@ class LocalExtensionRepositoryTest extends BaseTestCase {
 		$fakeReturnValues = array(
 			$extension->getExtensionKey() => $extension
 		);
-		$mock = $this->getMock(get_class($this->repository), array('findAll'));
+		$mock = $this->getMockBuilder(get_class($this->repository))->setMethods(array('findAll'))->disableOriginalConstructor()->getMock();
 		$mock->expects($this->once())->method('findAll')->will($this->returnValue($fakeReturnValues));
 		return $mock;
 	}
