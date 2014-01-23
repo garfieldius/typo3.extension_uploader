@@ -48,6 +48,15 @@ class Connection {
 	protected $token = NULL;
 
 	/**
+	 * @var \TYPO3\CMS\Core\Log\Logger
+	 */
+	protected $log;
+
+	public function initializeObject() {
+		$this->log = GeneralUtility::makeInstance('TYPO3\CMS\Core\Log\LogManager')->getLogger(__CLASS__);
+	}
+
+	/**
 	 * @param \SoapClient $client
 	 */
 	public function setClient(\SoapClient $client) {
@@ -118,6 +127,7 @@ class Connection {
 	 * @return ConnectionException
 	 */
 	protected function soapFaultToInternalException(\SoapFault $originalException) {
+		$this->log->error("Extension Upload: " . $originalException->getMessage(), array($originalException));
 		return new ConnectionException($originalException->getMessage(), 1360448742, $originalException);
 	}
 
@@ -163,7 +173,7 @@ class Connection {
 				$this->token = $this->client->headersIn['HeaderAuthenticate']->reactid;
 			}
 
-			GeneralUtility::devLog('Upload response', 'extension_uploader', 0, array('response' => $response));
+			$this->log->debug('SOAP Response', array($response));
 
 			return $response;
 		} catch (\SoapFault $exception) {

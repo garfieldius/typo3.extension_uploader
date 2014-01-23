@@ -75,6 +75,7 @@ class FilesCollector implements SingletonInterface {
 			}
 
 			$include = TRUE;
+
 			foreach ($this->filters as $filter) {
 				/* @var $filter FileFilterInterface */
 				$include = (!$filter->excludeFile($file) && $include);

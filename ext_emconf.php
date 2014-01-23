@@ -1,15 +1,5 @@
 <?php
 
-/***************************************************************
- * Extension Manager/Repository config file for ext "extension_uploader".
- *
- * Auto generated 19-05-2013 13:09
- *
- * Manual updates:
- * Only the data in the array - everything else is removed by next
- * writing. "version" and "dependencies" must not be touched!
- ***************************************************************/
-
 $EM_CONF[$_EXTKEY] = array (
 	'title' => 'Extension Uploader',
 	'description' => 'Upload your extensions into the TER',
@@ -21,31 +11,31 @@ $EM_CONF[$_EXTKEY] = array (
 	'priority' => '',
 	'dependencies' => 'extbase,fluid,extensionmanager',
 	'module' => '',
-	'state' => 'beta',
+	'state' => 'stable',
 	'internal' => '',
 	'uploadfolder' => '0',
 	'createDirs' => '',
 	'modify_tables' => '',
 	'clearCacheOnLoad' => 1,
 	'lockType' => '',
-	'version' => '1.0.9',
-	'constraints' => 
+	'version' => '1.0.10',
+	'constraints' =>
 	array (
-		'depends' => 
+		'depends' =>
 		array (
-			'extbase' => '6.0-6.9.99',
-			'fluid' => '6.0-6.9.99',
-			'typo3' => '6.0-6.9.99',
-			'extensionmanager' => '6.0.0-6.9.99',
+			'extbase' => '6.0.0-6.2.99',
+			'fluid' => '6.0.0-6.2.99',
+			'typo3' => '6.0.0-6.2.99',
+			'extensionmanager' => '6.0.0-6.2.99',
 		),
-		'conflicts' => 
+		'conflicts' =>
 		array (
 		),
-		'suggests' => 
+		'suggests' =>
 		array (
 		),
 	),
-	'suggests' => 
+	'suggests' =>
 	array (
 	),
 	'conflicts' => '',
