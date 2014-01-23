@@ -148,24 +148,28 @@ class UploaderCommandControllerTest extends BaseTestCase {
 			->expects($this->once())
 			->method('setExtension')
 			->with($extension);
+
 		$uploader
 			->expects($this->once())
 			->method('setRepository')
 			->with($repository);
+
 		$uploader
 			->expects($this->once())
 			->method('setSettings')
 			->with(array(
-			'state'         => $stateId,
-			'version'       => $version,
-			'release'       => 'custom',
-			'username'      => $username,
-			'password'      => $password,
-			'uploadComment' => $comment
-		));
+				'state'         => $stateId,
+				'version'       => $version,
+				'release'       => 'custom',
+				'username'      => $username,
+				'password'      => $password,
+				'uploadComment' => $comment
+			));
+
 		$uploader
 			->expects($this->once())
 			->method('validate');
+
 		$uploader
 			->expects($this->once())
 			->method('upload');
@@ -240,12 +244,18 @@ class UploaderCommandControllerTest extends BaseTestCase {
 			'password'      => $password,
 			'uploadComment' => $comment
 		));
+
 		$uploader
 			->expects($this->once())
 			->method('validate');
+
 		$uploader
 			->expects($this->once())
 			->method('upload');
+
+		$uploader
+			->expects($this->once())
+			->method('getReleasedVersion');
 
 		$response = $this->getMock('TYPO3\CMS\Extbase\Mvc\Cli\Response');
 		$response->expects($this->once())->method('appendContent')->withAnyParameters();

@@ -9,6 +9,7 @@
  *                                                                     */
 
 namespace T3x\ExtensionUploader\Tests\Unit\Upload;
+use T3x\ExtensionUploader\Upload\Connection;
 use TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase;
 
 /**
@@ -61,11 +62,13 @@ class ConnectionTest extends BaseTestCase {
 		$authHeader = new \stdClass();
 		$authHeader->username = $username;
 		$authHeader->password = $password;
-		$soapHeader = new \SoapHeader('', 'HeaderLogin', $authHeader, TRUE);
+		$soapHeader = new \SoapHeader(Connection::HEADER_NAMESPACE, 'HeaderLogin', $authHeader, TRUE);
 
 		$client = $this->getMock('SoapClient', array(), array('http://typo3.org/wsdl/tx_ter_wsdl.php'));
 		$client->expects($this->once())->method('__soapCall')->with('uploadExtension', $data, NULL, $soapHeader);
 
+		$this->object->setUsername($username);
+		$this->object->setPassword($password);
 		$this->object->setClient($client);
 		$this->object->uploadExtension($data);
 	}
@@ -80,16 +83,18 @@ class ConnectionTest extends BaseTestCase {
 		);
 		$username  = 'myName';
 		$password  = 'verySecurePassword';
-		$exception = new \SoapFault(1, 'Just testing');
+		$exception = new \SoapFault('DataEncodingUnknown', 'Just testing');
 
 		$authHeader = new \stdClass();
 		$authHeader->username = $username;
 		$authHeader->password = $password;
-		$soapHeader = new \SoapHeader('', 'HeaderLogin', $authHeader, TRUE);
+		$soapHeader = new \SoapHeader(Connection::HEADER_NAMESPACE, 'HeaderLogin', $authHeader, TRUE);
 
 		$client = $this->getMock('SoapClient', array(), array('http://typo3.org/wsdl/tx_ter_wsdl.php'));
 		$client->expects($this->once())->method('__soapCall')->with('uploadExtension', $data, NULL, $soapHeader)->will($this->throwException($exception));
 
+		$this->object->setUsername($username);
+		$this->object->setPassword($password);
 		$this->object->setClient($client);
 		$this->object->uploadExtension($data);
 	}
@@ -144,11 +149,11 @@ class ConnectionTest extends BaseTestCase {
 		$header1 = new \stdClass();
 		$header1->username = $username;
 		$header1->password = $password;
-		$header1 = new \SoapHeader('', 'HeaderLogin', $header1, TRUE);
+		$header1 = new \SoapHeader(Connection::HEADER_NAMESPACE, 'HeaderLogin', $header1, TRUE);
 
 		$header2 = new \stdClass();
 		$header2->reactid = $token;
-		$header2 = new \SoapHeader('', 'HeaderAuthenticate', $header1, TRUE);
+		$header2 = new \SoapHeader(Connection::HEADER_NAMESPACE, 'HeaderAuthenticate', $header2, TRUE);
 
 		$client = $this->getMock('SoapClient', array(), array(), '', FALSE);
 		$client
@@ -168,7 +173,7 @@ class ConnectionTest extends BaseTestCase {
 
 		$this->object->setClient($client);
 		$this->object->setUsername($username);
-		$this->object->setPassword($username);
+		$this->object->setPassword($password);
 		$this->object->uploadExtension(array());
 		$this->object->uploadExtension(array());
 	}

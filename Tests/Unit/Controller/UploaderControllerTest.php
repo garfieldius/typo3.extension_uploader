@@ -127,6 +127,7 @@ class UploaderControllerTest extends BaseTestCase {
 		$uploader->expects($this->once())->method('setRepository')->with($testRepo);
 		$uploader->expects($this->once())->method('validate');
 		$uploader->expects($this->once())->method('upload');
+		$uploader->expects($this->once())->method('getReleasedVersion')->will($this->returnValue($settings['version']));
 
 		$controller = $this->getMock('T3x\ExtensionUploader\Controller\UploaderController', array('redirect'));
 		$controller->expects($this->once())->method('redirect')->with('list');

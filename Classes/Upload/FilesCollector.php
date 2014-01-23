@@ -81,10 +81,16 @@ class FilesCollector implements SingletonInterface {
 			}
 
 			if ($include) {
+				if (!is_file($file) || !is_readable($file)) {
+					throw new NoFileAccessException('Cannot read file ' . $file, 1360446565);
+				}
+
 				$content = file_get_contents($file);
+
 				if (!is_string($content)) {
 					throw new NoFileAccessException('Cannot read file ' . $file, 1360446565);
 				}
+
 				$relativeFile = substr($file, $absolutePrefixLength);
 				$id           = md5($content);
 				$uploadFilesList[ utf8_encode($relativeFile) ] = array(

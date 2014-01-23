@@ -22,6 +22,8 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  */
 class Connection {
 
+	const HEADER_NAMESPACE = 'http://www.typo3.org/wsdl/tx_ter/';
+
 	/**
 	 * @var string
 	 */
@@ -150,10 +152,8 @@ class Connection {
 				$authHeader->password = $this->password;
 			}
 
-			$soapHeader = new \SoapHeader('', $authHeaderName, $authHeader, TRUE);
+			$soapHeader = new \SoapHeader(self::HEADER_NAMESPACE, $authHeaderName, $authHeader, TRUE);
 			$response   = $this->client->__soapCall($function, $data, NULL, $soapHeader);
-
-			GeneralUtility::devLog('Upload data', 'extension_uploader', 0, array('header' => get_object_vars($soapHeader), 'data' => $data));
 
 			if (
 				property_exists($this->client, 'headersIn') &&
