@@ -1,4 +1,5 @@
 <?php
+namespace T3x\ExtensionUploader\Tests\Unit\Utility;
 /*                                                                     *
  * This file is brought to you by Georg Großberger                     *
  * (c) 2013 by Georg Großberger <contact@grossberger-ge.org>           *
@@ -8,9 +9,7 @@
  * of the License, or (at your option) any later version.              *
  *                                                                     */
 
-namespace T3x\ExtensionUploader\Tests\Unit\Utility;
-use TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase;
-use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
+use T3x\ExtensionUploader\Tests\Unit\ExtensionUploaderTestCase;
 
 /**
  * Test the object utility
@@ -20,7 +19,7 @@ use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
  * @copyright 2013 by Georg Großberger
  * @license GPL v3 http://www.gnu.org/licenses/gpl-3.0.txt
  */
-class ObjectUtilityTest extends BaseTestCase {
+class ObjectUtilityTest extends ExtensionUploaderTestCase {
 
 	/**
 	 * @var \T3x\ExtensionUploader\Utility\ObjectUtility

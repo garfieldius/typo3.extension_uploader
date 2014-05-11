@@ -1,4 +1,5 @@
 <?php
+namespace T3x\ExtensionUploader\Tests\Unit\Upload;
 /*                                                                     *
  * This file is brought to you by Georg Großberger                     *
  * (c) 2013 by Georg Großberger <contact@grossberger-ge.org>           *
@@ -8,9 +9,8 @@
  * of the License, or (at your option) any later version.              *
  *                                                                     */
 
-namespace T3x\ExtensionUploader\Tests\Unit\Upload;
+use T3x\ExtensionUploader\Tests\Unit\ExtensionUploaderTestCase;
 use T3x\ExtensionUploader\Upload\Connection;
-use TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase;
 
 /**
  * Test the connection utility
@@ -19,7 +19,7 @@ use TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase;
  * @copyright 2013 by Georg Großberger
  * @license GPL v3 http://www.gnu.org/licenses/gpl-3.0.txt
  */
-class ConnectionTest extends BaseTestCase {
+class ConnectionTest extends ExtensionUploaderTestCase {
 	/**
 	 * @var \T3x\ExtensionUploader\Upload\Connection
 	 */
@@ -27,7 +27,9 @@ class ConnectionTest extends BaseTestCase {
 
 	protected function setUp() {
 		$proxy = $this->buildAccessibleProxy('T3x\ExtensionUploader\Upload\Connection');
+		$log = $this->getMockBuilder('TYPO3\CMS\Core\Log\Logger')->disableOriginalConstructor()->getMock();
 		$this->object = new $proxy();
+		$this->object->_set('log', $log);
 	}
 
 	public function testSetClient() {

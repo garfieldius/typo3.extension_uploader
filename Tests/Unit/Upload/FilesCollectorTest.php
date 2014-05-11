@@ -1,4 +1,5 @@
 <?php
+namespace T3x\ExtensionUploader\Tests\Unit\Upload;
 /*                                                                     *
  * This file is brought to you by Georg Großberger                     *
  * (c) 2013 by Georg Großberger <contact@grossberger-ge.org>           *
@@ -8,8 +9,11 @@
  * of the License, or (at your option) any later version.              *
  *                                                                     */
 
-namespace T3x\ExtensionUploader\Tests\Unit\Upload;
-use TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase;
+use T3x\ExtensionUploader\FileFilter\ExtensionBuilderFilter;
+use T3x\ExtensionUploader\FileFilter\ExtensionManagerMetaDataFilter;
+use T3x\ExtensionUploader\FileFilter\SystemMetaDataFilter;
+use T3x\ExtensionUploader\FileFilter\VcsMetaDataFilter;
+use T3x\ExtensionUploader\Tests\Unit\ExtensionUploaderTestCase;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
 /**
@@ -20,7 +24,7 @@ use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
  * @copyright 2013 by Georg Großberger
  * @license GPL v3 http://www.gnu.org/licenses/gpl-3.0.txt
  */
-class FilesCollectorTest extends BaseTestCase {
+class FilesCollectorTest extends ExtensionUploaderTestCase {
 
 	public function setUp() {
 		foreach (array('testA', 'testB', 'testC', '.gitinfo') as $filename) {
@@ -86,7 +90,7 @@ class FilesCollectorTest extends BaseTestCase {
 		$collector = $this->getMock('T3x\ExtensionUploader\Upload\FilesCollector', array('collectAllFilesInDirectory'));
 		$collector->expects($this->once())->method('collectAllFilesInDirectory')->with($path)->will($this->returnValue($files));
 
-		$collector->addFilesFilter(new \T3x\ExtensionUploader\FileFilter\VcsMetaDataFilter());
+		$collector->addFilesFilter(new VcsMetaDataFilter());
 		$collector->collectFilesOfExtension('extension_uploader');
 	}
 
@@ -152,14 +156,15 @@ class FilesCollectorTest extends BaseTestCase {
 			'Tests/Unit/Upload/FilesCollectorTest.php',
 			'Tests/Unit/Upload/UploaderTest.php',
 			'Tests/Unit/Utility/ObjectUtilityTest.php',
-			'Tests/Unit/Utility/StatesUtilityTest.php'
+			'Tests/Unit/Utility/StatesUtilityTest.php',
+			'Tests/Unit/ExtensionUploaderTestCase.php',
 		);
 		$collector = $this->objectManager->get('T3x\ExtensionUploader\Upload\FilesCollector');
 
-		$collector->addFilesFilter(new \T3x\ExtensionUploader\FileFilter\VcsMetaDataFilter());
-		$collector->addFilesFilter(new \T3x\ExtensionUploader\FileFilter\ExtensionBuilderFilter());
-		$collector->addFilesFilter(new \T3x\ExtensionUploader\FileFilter\SystemMetaDataFilter());
-		$collector->addFilesFilter(new \T3x\ExtensionUploader\FileFilter\ExtensionManagerMetaDataFilter());
+		$collector->addFilesFilter(new VcsMetaDataFilter());
+		$collector->addFilesFilter(new ExtensionBuilderFilter());
+		$collector->addFilesFilter(new SystemMetaDataFilter());
+		$collector->addFilesFilter(new ExtensionManagerMetaDataFilter());
 		$actual = $collector->collectFilesOfExtension('extension_uploader');
 
 		$this->assertEquals(count($expected), count($actual));

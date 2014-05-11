@@ -1,4 +1,5 @@
 <?php
+namespace T3x\ExtensionUploader\Tests\Unit\Domain\Repository;
 /*                                                                     *
  * This file is brought to you by Georg Großberger                     *
  * (c) 2013 by Georg Großberger <contact@grossberger-ge.org>           *
@@ -8,9 +9,10 @@
  * of the License, or (at your option) any later version.              *
  *                                                                     */
 
-namespace T3x\ExtensionUploader\Tests\Unit\Domain\Repository;
-use TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase;
+use T3x\ExtensionUploader\Domain\Model\LocalExtension;
+use T3x\ExtensionUploader\Tests\Unit\ExtensionUploaderTestCase;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+use TYPO3\CMS\Extensionmanager\Domain\Model\Extension;
 
 /**
  * Test the local extension repository
@@ -20,7 +22,7 @@ use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
  * @copyright 2013 by Georg Großberger
  * @license GPL v3 http://www.gnu.org/licenses/gpl-3.0.txt
  */
-class LocalExtensionRepositoryTest extends BaseTestCase {
+class LocalExtensionRepositoryTest extends ExtensionUploaderTestCase {
 
 	/**
 	 * @var \T3x\ExtensionUploader\Domain\Repository\LocalExtensionRepository
@@ -33,12 +35,12 @@ class LocalExtensionRepositoryTest extends BaseTestCase {
 
 	public function testFindAllWithTerExtension() {
 
-		$fetchedExtension = new \TYPO3\CMS\Extensionmanager\Domain\Model\Extension();
+		$fetchedExtension = new Extension();
 		$fetchedExtension->setExtensionKey('extension_uploader');
 		$fetchedExtension->setTitle('Extension Uploader');
 		$fetchedExtension->setVersion('1.2.3');
 
-		$expectedExtension = new \T3x\ExtensionUploader\Domain\Model\LocalExtension();
+		$expectedExtension = new LocalExtension();
 		$expectedExtension->setExtensionKey('extension_uploader');
 		$expectedExtension->setTitle('Extension Uploader');
 		$expectedExtension->setVersion('1.2.3');
@@ -78,12 +80,12 @@ class LocalExtensionRepositoryTest extends BaseTestCase {
 	}
 
 	public function testFindAllWithLocalOnlyExtension() {
-		$fetchedExtension = new \TYPO3\CMS\Extensionmanager\Domain\Model\Extension();
+		$fetchedExtension = new Extension();
 		$fetchedExtension->setExtensionKey('extension_uploader');
 		$fetchedExtension->setTitle('Extension Uploader');
 		$fetchedExtension->setVersion('1.2.3');
 
-		$expectedExtension = new \T3x\ExtensionUploader\Domain\Model\LocalExtension();
+		$expectedExtension = new LocalExtension();
 		$expectedExtension->setExtensionKey('extension_uploader');
 		$expectedExtension->setTitle('Extension Uploader');
 		$expectedExtension->setVersion('1.2.3');
@@ -129,12 +131,12 @@ class LocalExtensionRepositoryTest extends BaseTestCase {
 	}
 
 	public function testFindAllNoDependenciesForcesDefaultDependencies() {
-		$fetchedExtension = new \TYPO3\CMS\Extensionmanager\Domain\Model\Extension();
+		$fetchedExtension = new Extension();
 		$fetchedExtension->setExtensionKey('extension_uploader');
 		$fetchedExtension->setTitle('Extension Uploader');
 		$fetchedExtension->setVersion('1.2.3');
 
-		$expectedExtension = new \T3x\ExtensionUploader\Domain\Model\LocalExtension();
+		$expectedExtension = new LocalExtension();
 		$expectedExtension->setExtensionKey('extension_uploader');
 		$expectedExtension->setTitle('Extension Uploader');
 		$expectedExtension->setVersion('1.2.3');
@@ -177,7 +179,7 @@ class LocalExtensionRepositoryTest extends BaseTestCase {
 	}
 
 	protected function getRepositoryMockForFindOneByExtensionKey() {
-		$extension = new \T3x\ExtensionUploader\Domain\Model\LocalExtension();
+		$extension = new LocalExtension();
 		$extension->setExtensionKey('extension_uploader');
 		$extension->setTitle('Extension Uploader');
 		$fakeReturnValues = array(
@@ -192,7 +194,7 @@ class LocalExtensionRepositoryTest extends BaseTestCase {
 		$extensionKey = 'extension_uploader';
 		$extension = $this->getRepositoryMockForFindOneByExtensionKey()->findOneByExtensionKey($extensionKey);
 		$this->assertEquals($extensionKey, $extension->getExtensionKey());
-		$this->assertTrue($extension instanceof \T3x\ExtensionUploader\Domain\Model\LocalExtension);
+		$this->assertTrue($extension instanceof LocalExtension);
 	}
 
 	/**

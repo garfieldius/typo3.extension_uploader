@@ -1,4 +1,5 @@
 <?php
+namespace T3x\ExtensionUploader\Tests\Unit\Upload;
 /*                                                                     *
  * This file is brought to you by Georg Großberger                     *
  * (c) 2013 by Georg Großberger <contact@grossberger-ge.org>           *
@@ -8,9 +9,8 @@
  * of the License, or (at your option) any later version.              *
  *                                                                     */
 
-namespace T3x\ExtensionUploader\Tests\Unit\Upload;
 use T3x\ExtensionUploader\Domain\Model\LocalExtension;
-use TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase;
+use T3x\ExtensionUploader\Tests\Unit\ExtensionUploaderTestCase;
 
 /**
  * Test for the uploader
@@ -20,7 +20,7 @@ use TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase;
  * @copyright 2013 by Georg Großberger
  * @license GPL v3 http://www.gnu.org/licenses/gpl-3.0.txt
  */
-class UploaderTest extends BaseTestCase {
+class UploaderTest extends ExtensionUploaderTestCase {
 
 	/**
 	 * @var \T3x\ExtensionUploader\Upload\Uploader

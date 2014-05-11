@@ -1,4 +1,5 @@
 <?php
+namespace T3x\ExtensionUploader\Tests\Unit\FileFilter;
 /*                                                                     *
  * This file is brought to you by Georg Großberger                     *
  * (c) 2013 by Georg Großberger <contact@grossberger-ge.org>           *
@@ -8,8 +9,7 @@
  * of the License, or (at your option) any later version.              *
  *                                                                     */
 
-namespace T3x\ExtensionUploader\Tests\Unit\FileFilter;
-use TYPO3\CMS\Extbase\Tests\Unit\BaseTestCase;
+use T3x\ExtensionUploader\Tests\Unit\ExtensionUploaderTestCase;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use T3x\ExtensionUploader\FileFilter\ExtensionBuilderFilter;
@@ -22,7 +22,7 @@ use T3x\ExtensionUploader\FileFilter\ExtensionBuilderFilter;
  * @copyright 2013 by Georg Großberger
  * @license GPL v3 http://www.gnu.org/licenses/gpl-3.0.txt
  */
-class ExtensionBuilderFilterTest extends BaseTestCase {
+class ExtensionBuilderFilterTest extends ExtensionUploaderTestCase {
 
 	/**
 	 * @var ExtensionBuilderFilter
