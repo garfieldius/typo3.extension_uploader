@@ -1,17 +1,17 @@
-{namespace eu=T3x\ExtensionUploader\ViewHelpers}
-
-<eu:backendContainer pageTitle="Extension Uploader" enableJumpToUrl="true" enableClickMenu="false" loadPrototype="false" loadScriptaculous="false" loadExtJs="false" loadExtJsTheme="true"
-	cssFiles="{
-		0: '{f:uri.resource(path:\'Css/main.css\', extensionName: \'Extensionmanager\')}',
-		1: '{f:uri.resource(path:\'Contrib/LoadMask/jquery.loadmask.css\', extensionName: \'Extensionmanager\')}',
-		2: '{f:uri.resource(path:\'Stylesheet/Uploader.css\')}'
+<f:be.container pageTitle="Extension Uploader" enableJumpToUrl="true" enableClickMenu="false" loadPrototype="false" loadScriptaculous="false" loadExtJs="false" loadExtJsTheme="true" loadJQuery="true"
+	includeCssFiles="{
+		0:'{f:uri.resource(path:\'Contrib/jQueryUI/jquery-ui-1.10.3.custom.min.css\', extensionName: \'Extensionmanager\')}',
+		1:'{f:uri.resource(path:\'Contrib/LoadMask/jquery.loadmask.css\', extensionName: \'Extensionmanager\')}',
+		2:'{f:uri.resource(path:\'Css/main.css\', extensionName: \'Extensionmanager\')}',
+		3: '{f:uri.resource(path:\'Stylesheet/Uploader.css\')}'
 	}"
-	jsFiles="{
-		0:'{f:uri.resource(path:\'JavaScript/jquery-1.8.2.min.js\', extensionName: \'Extensionmanager\')}',
-		1:'{f:uri.resource(path:\'JavaScript/jquery.dataTables-1.9.4.min.js\', extensionName: \'Extensionmanager\')}',
-		2:'{f:uri.resource(path:\'JavaScript/jquery-ui-1.8.17.custom.min.js\', extensionName: \'Extensionmanager\')}',
-		3:'{f:uri.resource(path:\'JavaScript/jquery.tools.min.js\', extensionName: \'Extensionmanager\')}',
-		4:'{f:uri.resource(path:\'Contrib/LoadMask/jquery.loadmask.js\', extensionName: \'Extensionmanager\')}'
+	includeJsFiles="{
+		0:'contrib/jquery/jquery.dataTables-1.9.4.min.js, extensionName: \'Extensionmanager\'',
+		1:'{f:uri.resource(path:\'Contrib/jQueryUI/jquery-ui-1.10.3.min.js\', extensionName: \'Extensionmanager\')}',
+		2:'{f:uri.resource(path:\'JavaScript/jquery-validate-1.11.1.min.js\', extensionName: \'Extensionmanager\')}',
+		3:'{f:uri.resource(path:\'JavaScript/jquery.expander.min.js\', extensionName: \'Extensionmanager\')}',
+		4:'contrib/jquery/jquery.clearable.js',
+		5:'{f:uri.resource(path:\'Contrib/LoadMask/jquery.loadmask.js\', extensionName: \'Extensionmanager\')}'
 	}">
 
 	<div id="typo3-docheader">
@@ -31,4 +31,4 @@
 			<div class="contentWrapper"><f:render section="Content" /></div>
 		</div>
 	</div>
-</eu:backendContainer>
+</f:be.container>
