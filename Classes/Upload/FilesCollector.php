@@ -94,8 +94,10 @@ class FilesCollector implements SingletonInterface {
 
 				$relativeFile = substr($file, $absolutePrefixLength);
 				$id           = md5($content);
-				$uploadFilesList[ utf8_encode($relativeFile) ] = array(
-					'name'             => utf8_encode($relativeFile),
+				$key          = utf8_encode($relativeFile);
+
+				$uploadFilesList[$key] = array(
+					'name'             => $key,
 					'size'             => strlen($content),
 					'modificationTime' => (integer) filemtime($file),
 					'isExecutable'     => (integer) is_executable($file),

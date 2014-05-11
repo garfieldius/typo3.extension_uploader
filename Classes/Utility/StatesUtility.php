@@ -37,7 +37,7 @@ class StatesUtility {
 
 		foreach ($dummyInstance->getDefaultState() as $index => $key) {
 			if ($index < 6) {
-				$options[ $index ] = LocalizationUtility::translate('state.' . $key, 'ExtensionUploader');
+				$options[$index] = LocalizationUtility::translate('state.' . $key, 'ExtensionUploader');
 			}
 		}
 		return $options;
@@ -59,7 +59,7 @@ class StatesUtility {
 
 			foreach ($dummyInstance->getDefaultState() as $index => $key) {
 				if ($index < 6) {
-					$this->keyToIndexMap[ $key ] = $index;
+					$this->keyToIndexMap[$key] = $index;
 				}
 			}
 		}

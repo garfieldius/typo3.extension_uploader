@@ -145,7 +145,16 @@ class LocalExtension extends Extension {
 				return $this;
 			}
 		}
-		throw new UploaderException("Invalid category key '$categoryKey' in extension '{$this->getExtensionKey()}', must be one of: " . implode(', ', self::$defaultCategories), 1361548543);
+
+		$message =
+			'Invalid category key \'' .
+			$categoryKey .
+			'\' in extension ' .
+			$this->getExtensionKey() .
+			' must be one of: ' .
+			implode(', ', self::$defaultCategories);
+
+		throw new UploaderException($message, 1361548543);
 	}
 
 	/**
@@ -262,8 +271,8 @@ class LocalExtension extends Extension {
 	 * @return string
 	 */
 	public function getStateKey() {
-		if (isset(self::$defaultStates[ $this->getState() ])) {
-			return self::$defaultStates[ $this->getState() ];
+		if (isset(self::$defaultStates[$this->getState()])) {
+			return self::$defaultStates[$this->getState()];
 		} else {
 			return self::$defaultStates[999];
 		}

@@ -180,8 +180,12 @@ class LocalExtensionRepository extends ExtensionRepository {
 
 			} catch (UploaderException $exception) {
 				if ($this->silenceExceptions === TRUE) {
-					$message = LocalizationUtility::translate('error.' . $exception->getCode(), 'extension_uploader', array($extKey, $exception->getMessage())) ?: $exception->getMessage();
-					$this->flashMessageContainer->add($message, '', FlashMessage::ERROR);
+					$message = LocalizationUtility::translate(
+						'error.' . $exception->getCode(),
+						'extension_uploader',
+						array($extKey, $exception->getMessage())
+					);
+					$this->flashMessageContainer->add($message ?: $exception->getMessage(), '', FlashMessage::ERROR);
 				} else {
 					throw $exception;
 				}
