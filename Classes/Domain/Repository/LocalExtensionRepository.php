@@ -14,6 +14,7 @@ use TYPO3\CMS\Core\Messaging\FlashMessage;
 use TYPO3\CMS\Core\Messaging\FlashMessageQueue;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
+use TYPO3\CMS\Extensionmanager\Domain\Model\Extension;
 use TYPO3\CMS\Extensionmanager\Domain\Repository\ExtensionRepository;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
@@ -107,12 +108,19 @@ class LocalExtensionRepository extends ExtensionRepository {
 				continue;
 			}
 			try {
+
+				$extension = GeneralUtility::makeInstance('T3x\ExtensionUploader\Domain\Model\LocalExtension');
+
 				/* @var $extension \T3x\ExtensionUploader\Domain\Model\LocalExtension */
-				if (isset($extensionConfig['terObject']) && $extensionConfig['terObject'] instanceof \TYPO3\CMS\Extensionmanager\Domain\Model\Extension) {
-					$extension = $this->findOneByExtensionKeyAndVersion($extKey, $extensionConfig['terObject']->getVersion());
+				if (isset($extensionConfig['terObject']) && $extensionConfig['terObject'] instanceof Extension) {
+					$possibleExtension = $this->findOneByExtensionKeyAndVersion($extKey, $extensionConfig['terObject']->getVersion());
+
+					if ($possibleExtension instanceof Extension) {
+						$extension = $possibleExtension;
+					}
+
 					$extension->setKnownToTer(TRUE);
 				} else {
-					$extension = GeneralUtility::makeInstance('T3x\ExtensionUploader\Domain\Model\LocalExtension');
 					$extension->setExtensionKey($extKey);
 					$extension->setKnownToTer(FALSE);
 				}
