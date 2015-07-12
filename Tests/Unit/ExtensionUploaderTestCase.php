@@ -9,7 +9,7 @@ namespace T3x\ExtensionUploader\Tests\Unit;
  * of the License, or (at your option) any later version.              *
  *                                                                     */
 
-use TYPO3\CMS\Core\Tests\UnitTestCase;
+use TYPO3\CMS\Core\Tests\BaseTestCase;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 
 /**
@@ -20,7 +20,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
  * @copyright 2014 by Georg Großberger
  * @license GPL v3 http://www.gnu.org/licenses/gpl-3.0.txt
  */
-class ExtensionUploaderTestCase extends UnitTestCase {
+class ExtensionUploaderTestCase extends BaseTestCase {
 
 	/**
 	 * @var \TYPO3\CMS\Extbase\Object\ObjectManagerInterface
@@ -33,6 +33,21 @@ class ExtensionUploaderTestCase extends UnitTestCase {
 	 * @return void
 	 */
 	public function runBare() {
+
+		$GLOBALS['TYPO3_DB'] = $this->getMock('TYPO3\CMS\Core\Database\DatabaseConnection');
+		$GLOBALS['TYPO3_LOADED_EXT'] = array();
+
+		/** @var \TYPO3\CMS\Core\Cache\CacheManager $cm */
+		$cm = GeneralUtility::makeInstance('TYPO3\CMS\Core\Cache\CacheManager');
+		$cacheConfig = array(
+			'backend' => 'TYPO3\\CMS\\Core\\Cache\\Backend\\TransientMemoryBackend',
+			'frontend' => 'TYPO3\\CMS\\Core\\Cache\\Frontend\\VariableFrontend'
+		);
+		$cm->setCacheConfigurations(array(
+			'extbase_object' => $cacheConfig,
+			'extbase_datamapfactory_datamap' => $cacheConfig,
+		));
+
 		$objectManager = GeneralUtility::makeInstance('TYPO3\CMS\Extbase\Object\ObjectManager');
 		$this->objectManager = clone $objectManager;
 		parent::runBare();

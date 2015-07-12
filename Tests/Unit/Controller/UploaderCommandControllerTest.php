@@ -28,7 +28,8 @@ class UploaderCommandControllerTest extends ExtensionUploaderTestCase {
 	protected $controller;
 
 	protected function setUp() {
-		$this->controller = $this->objectManager->get($this->buildAccessibleProxy('T3x\ExtensionUploader\Controller\UploaderCommandController'));
+		$proxyClassName = $this->buildAccessibleProxy('T3x\ExtensionUploader\Controller\UploaderCommandController');
+		$this->controller = new $proxyClassName();
 	}
 
 	public function testUploadAction() {

@@ -30,7 +30,8 @@ class LocalExtensionRepositoryTest extends ExtensionUploaderTestCase {
 	protected $repository;
 
 	protected function setUp() {
-		$this->repository = $this->objectManager->get('T3x\ExtensionUploader\Domain\Repository\LocalExtensionRepository');
+		$proxyClassName = $this->buildAccessibleProxy('T3x\ExtensionUploader\Domain\Repository\LocalExtensionRepository');
+		$this->repository = new $proxyClassName($this->objectManager);
 	}
 
 	public function testFindAllWithTerExtension() {
