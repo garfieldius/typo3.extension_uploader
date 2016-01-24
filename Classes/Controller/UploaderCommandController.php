@@ -136,9 +136,14 @@ class UploaderCommandController extends CommandController {
 				'extension_uploader',
 				array($extkey, $this->uploader->getReleasedVersion())
 			);
+			$this->outputLine($message);
 		} catch (\T3x\ExtensionUploader\UploaderException $e) {
 			$message = LocalizationUtility::translate('exception.' . $e->getCode(), 'extension_uploader');
+			if ($message == '') {
+				$message = 'Error: ' . $e->getMessage();
+			}
+			$this->outputLine($message);
+			$this->quit(1);
 		}
-		$this->outputLine($message);
 	}
 }
